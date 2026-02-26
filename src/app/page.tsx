@@ -1,65 +1,223 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { format } from "date-fns";
+import { CalendarDays, ShieldCheck, Sparkles, TicketCheck } from "lucide-react";
+import { HomeHeroSlider } from "@/components/home-hero-slider";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPublishedEvents } from "@/lib/queries";
+import { formatCurrency } from "@/lib/utils";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "EventSphere | Premium Event Ticket Booking",
+  description:
+    "Book concerts, conferences, and premium experiences with secure checkout, instant ticket delivery, and QR/barcode entry.",
+  keywords: [
+    "ticket booking",
+    "event management",
+    "online tickets",
+    "concert tickets",
+    "event checkout",
+  ],
+  openGraph: {
+    title: "EventSphere | Premium Event Ticket Booking",
+    description:
+      "Discover and book events with a modern, mobile-friendly experience.",
+    type: "website",
+  },
+};
+
+export default async function HomePage() {
+  const events = await getPublishedEvents();
+  const featuredSlides = events.slice(0, 5).map((event) => ({
+    id: event.id,
+    title: event.title,
+    venue: event.venue,
+    startsAtLabel: format(event.startsAt, "PPP p"),
+    coverImage:
+      event.coverImage ??
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200",
+    minPriceLabel: formatCurrency(
+      event.ticketTypes.length
+        ? Math.min(...event.ticketTypes.map((type) => type.priceCents))
+        : 0,
+      event.ticketTypes[0]?.currency ?? "USD",
+    ),
+  }));
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "EventSphere",
+    url: process.env.APP_URL ?? "http://localhost:3000",
+    description:
+      "Professional event booking platform with secure checkout and instant ticket delivery.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${process.env.APP_URL ?? "http://localhost:3000"}/?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  if (events.length === 0) {
+    return (
+      <div className="animate-fade-in-up rounded-2xl border border-dashed border-slate-300 p-10 text-center dark:border-slate-700">
+        <h1 className="text-2xl font-semibold">No upcoming events</h1>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+          Check back soon for newly announced experiences.
+        </p>
+      </div>
+    );
+  }
+
+  const featureItems = [
+    {
+      title: "Instant Delivery",
+      description: "Receive your ticket PDF instantly with embedded QR and barcode.",
+      icon: TicketCheck,
+    },
+    {
+      title: "Secure Checkout",
+      description: "Stripe-powered checkout with transaction-safe webhook fulfillment.",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Curated Events",
+      description: "Premium events with multiple ticket tiers and real-time availability.",
+      icon: Sparkles,
+    },
+    {
+      title: "Mobile Ready",
+      description: "Responsive booking journey designed for fast mobile conversion.",
+      icon: CalendarDays,
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <section className="space-y-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/60 bg-gradient-to-br from-cyan-100 via-sky-50 to-teal-100 p-6 shadow-xl animate-gradient-shift dark:border-slate-800 dark:from-cyan-950/30 dark:via-slate-950 dark:to-teal-950/20 md:p-8">
+        <div className="animate-soft-float absolute -left-10 top-16 h-44 w-44 rounded-full bg-cyan-300/35 blur-3xl dark:bg-cyan-700/25" />
+        <div className="animate-soft-float absolute -right-10 -top-12 h-44 w-44 rounded-full bg-teal-300/35 blur-3xl dark:bg-teal-700/20" />
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[1.15fr_1fr]">
+          <div className="animate-fade-in-up">
+            <Badge variant="secondary" className="mb-4">
+              Modern Ticketing Platform
+            </Badge>
+            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl dark:text-slate-50">
+              Beautiful Event Booking That Converts Faster
+            </h1>
+            <p className="mt-4 max-w-2xl text-slate-700 dark:text-slate-200">
+              Designed for trust and speed with gradient-rich visuals, secure payments, and instant ticket delivery.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href={`/events/${events[0].id}`}>Book Featured Event</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/dashboard">My Tickets Dashboard</Link>
+              </Button>
+            </div>
+          </div>
+          <HomeHeroSlider slides={featuredSlides} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {featureItems.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <Card
+              key={item.title}
+              className="animate-fade-in-up border-slate-200/80 shadow-sm transition-transform duration-300 hover:-translate-y-1 dark:border-slate-800"
+              style={{ animationDelay: `${index * 80}ms` }}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Icon className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                  {item.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-sm">{item.description}</CardDescription>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">Upcoming Events</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Explore high-quality experiences and reserve tickets instantly.
+            </p>
+          </div>
         </div>
-      </main>
-    </div>
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {events.map((event, index) => (
+            <Card
+              key={event.id}
+              className="animate-fade-in-up overflow-hidden border-slate-200/80 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-800"
+              style={{ animationDelay: `${index * 70}ms` }}
+            >
+              <div
+                className="relative h-48 bg-cover bg-center"
+                style={{
+                  backgroundImage: `url(${
+                    event.coverImage ??
+                    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200"
+                  })`,
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
+                <p className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-slate-900">
+                  {format(event.startsAt, "PPP")}
+                </p>
+              </div>
+              <CardHeader>
+                <CardTitle className="line-clamp-1">{event.title}</CardTitle>
+                <CardDescription className="line-clamp-1">
+                  {event.venue} | {format(event.startsAt, "p")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="line-clamp-3 text-sm text-slate-600 dark:text-slate-300">
+                  {event.description}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {event.ticketTypes.slice(0, 3).map((type) => (
+                    <Badge key={type.id} variant="secondary">
+                      {type.name} {formatCurrency(type.priceCents, type.currency)}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button asChild variant="outline">
+                    <Link href={`/events/${event.id}`}>Details</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href={`/checkout?eventId=${event.id}`}>Book</Link>
+                  </Button>
+                </div>
+                {event.ticketTypes[0] ? (
+                  <Button asChild className="w-full" size="sm">
+                    <Link href={`/checkout?eventId=${event.id}&ticketTypeId=${event.ticketTypes[0].id}&qty=1`}>
+                      Quick Book {event.ticketTypes[0].name}
+                    </Link>
+                  </Button>
+                ) : null}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

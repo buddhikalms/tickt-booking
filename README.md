@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ticket Booking + Event Management (Next.js + Prisma + MySQL)
 
-## Getting Started
+Production-ready event ticketing platform with:
+- Public event browsing and Stripe Checkout
+- Idempotent Stripe webhook-based ticket issuance
+- QR + barcode ticket generation and PDF email delivery via Gmail SMTP
+- Admin panel for events, ticket types, orders, tickets, and check-in
+- Role-based auth (`ADMIN`, `STAFF`, `CUSTOMER`) with Auth.js (NextAuth)
 
-First, run the development server:
+## Stack
+- Next.js (App Router), TypeScript
+- Prisma + MySQL
+- Auth.js / NextAuth credentials + role-based session
+- Stripe Checkout + webhook (`checkout.session.completed`)
+- Gmail SMTP email
+- Tailwind CSS + reusable UI primitives
+- Zod + React Hook Form
+- TanStack Table
+- `qrcode`, `bwip-js`, `@react-pdf/renderer`
+- Vitest tests
 
+## Setup
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copy environment file:
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set required env vars in `.env`:
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICELESS_MODE=true`
+- `SMTP_HOST` (`smtp.gmail.com`)
+- `SMTP_PORT` (`465`)
+- `SMTP_SECURE` (`true`)
+- `SMTP_USER` (your Gmail address)
+- `SMTP_PASS` (Google App Password)
+- `EMAIL_FROM`
+- `APP_URL`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Generate Prisma client and run migration:
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+```
 
-## Learn More
+5. Seed an admin user and sample event data:
+```bash
+npm run prisma:seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Start dev server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
+- `npm run dev`
+- `npm run build`
+- `npm run start`
+- `npm run lint`
+- `npm run test`
+- `npm run prisma:generate`
+- `npm run prisma:migrate`
+- `npm run prisma:seed`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stripe Local Webhook
+1. Start app on `http://localhost:3000`
+2. In a separate shell:
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+3. Copy the webhook secret and set `STRIPE_WEBHOOK_SECRET`.
 
-## Deploy on Vercel
+## Google OAuth Setup
+1. Open Google Cloud Console and create OAuth 2.0 Web credentials.
+2. Authorized redirect URI:
+   - `http://localhost:3000/api/auth/callback/google`
+3. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`.
+4. Restart dev server after updating env.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Gmail SMTP Email Setup
+- Enable 2-Step Verification on your Gmail account.
+- Generate a Google App Password and set it as `SMTP_PASS`.
+- Set `SMTP_USER` to your Gmail address.
+- Use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`.
+- Keep `EMAIL_FROM` aligned with your Gmail address/domain policy.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Auth / Admin
+- Login page: `/login`
+- Supports Google OAuth and credentials login.
+- Admin pages: `/admin/*` (requires `ADMIN` or `STAFF`)
+- Seed defaults:
+  - `SEED_ADMIN_EMAIL=admin@example.com`
+  - `SEED_ADMIN_PASSWORD=ChangeMe123!`
+
+## Core Routes
+- Public:
+  - `/`
+  - `/events/[id]`
+  - `/checkout?eventId=...`
+  - `/success?session_id=...`
+  - `/t/[code]`
+- Admin:
+  - `/admin`
+  - `/admin/events`
+  - `/admin/events/[id]`
+  - `/admin/events/[id]/ticket-types`
+  - `/admin/orders`
+  - `/admin/tickets`
+  - `/admin/checkin`
+- API:
+  - `POST /api/stripe/webhook`
+  - `POST /api/admin/checkin`
+
+## Notes
+- Webhook idempotency is enforced via `WebhookEvent` (`stripeEventId` unique).
+- Prices are always loaded from DB during checkout creation.
+- Ticket codes are random, high-entropy, and non-sequential.
