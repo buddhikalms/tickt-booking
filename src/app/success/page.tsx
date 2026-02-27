@@ -2,14 +2,14 @@ import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { syncOrderFromStripeSession } from "@/lib/order-service";
+import { syncOrderFromOrderId, syncOrderFromStripeSession } from "@/lib/order-service";
 
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string }>;
+  searchParams: Promise<{ session_id?: string; order_id?: string; provider?: string }>;
 }) {
-  const { session_id: sessionId } = await searchParams;
+  const { session_id: sessionId, order_id: orderId } = await searchParams;
   const syncResult =
     sessionId
       ? await syncOrderFromStripeSession(sessionId, "success").catch(() => ({
@@ -18,6 +18,13 @@ export default async function SuccessPage({
           status: null,
           message: "Could not verify payment right now. Please refresh in a minute.",
         }))
+      : orderId
+        ? await syncOrderFromOrderId(orderId, "success").catch(() => ({
+            ok: false,
+            paid: false,
+            status: null,
+            message: "Could not verify payment right now. Please refresh in a minute.",
+          }))
       : null;
 
   return (
@@ -34,7 +41,8 @@ export default async function SuccessPage({
               {syncResult.message}
             </p>
           ) : null}
-          {sessionId ? <p className="text-xs text-slate-500">Stripe Session: {sessionId}</p> : null}
+          {sessionId ? <p className="text-xs text-slate-500">Checkout Session: {sessionId}</p> : null}
+          {orderId ? <p className="text-xs text-slate-500">Order: {orderId}</p> : null}
           <Button asChild>
             <Link href="/">Back to events</Link>
           </Button>

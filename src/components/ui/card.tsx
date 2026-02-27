@@ -1,7 +1,15 @@
 import { cn } from "@/lib/utils";
 
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "rounded-xl border border-amber-200/80 bg-white/90 shadow-sm dark:border-amber-900/70 dark:bg-amber-950/30",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -13,7 +21,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 }
 
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-slate-500 dark:text-slate-400", className)} {...props} />;
+  return <p className={cn("text-sm text-amber-950/85 dark:text-amber-50/85", className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

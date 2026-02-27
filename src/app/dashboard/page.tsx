@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
-import { syncOrderFromStripeSession } from "@/lib/order-service";
+import { syncOrderFromStoredCheckoutReference } from "@/lib/order-service";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export default async function UserDashboardPage() {
 
   for (const order of pendingOrders) {
     if (order.stripeSessionId) {
-      await syncOrderFromStripeSession(order.stripeSessionId, "dashboard").catch(() => null);
+      await syncOrderFromStoredCheckoutReference(order.stripeSessionId, "dashboard").catch(() => null);
     }
   }
 

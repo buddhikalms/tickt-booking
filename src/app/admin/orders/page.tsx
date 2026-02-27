@@ -39,7 +39,7 @@ export default async function AdminOrdersPage({
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Total</TableHead>
-                <TableHead>Stripe Session</TableHead>
+                <TableHead>Checkout Ref</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -59,7 +59,7 @@ export default async function AdminOrdersPage({
                       {order.status === "PENDING" && order.stripeSessionId ? (
                         <form action={syncOrderPaymentAction.bind(null, order.id)}>
                           <Button size="sm" variant="outline" type="submit">
-                            Sync Stripe
+                            Sync Payment
                           </Button>
                         </form>
                       ) : null}

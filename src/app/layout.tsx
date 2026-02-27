@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Merriweather, Source_Sans_3 } from "next/font/google";
 import Link from "next/link";
 import { LayoutDashboard } from "lucide-react";
 import { Providers } from "@/components/providers";
@@ -9,29 +9,35 @@ import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/auth";
 import "./globals.css";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
   weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
+  weight: ["400", "700", "900"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "EventSphere Ticketing",
-    template: "%s | EventSphere",
+    default: "Temple Tickets",
+    template: "%s | Temple Tickets",
   },
-  description: "Modern ticket booking and event management with secure checkout and instant e-ticket delivery.",
+  description: "Ticket booking and event coordination for Buddhist temple programs, dana, and community gatherings.",
   openGraph: {
-    title: "EventSphere Ticketing",
-    description: "Book events with a premium, mobile-first experience.",
+    title: "Temple Tickets",
+    description: "Reserve seats for Buddhist temple events with secure checkout and instant confirmation.",
     type: "website",
-    siteName: "EventSphere",
+    siteName: "Temple Tickets",
   },
   twitter: {
     card: "summary_large_image",
-    title: "EventSphere Ticketing",
-    description: "Book events with secure checkout and instant ticket delivery.",
+    title: "Temple Tickets",
+    description: "Book Buddhist temple events with secure checkout and instant ticket delivery.",
   },
 };
 
@@ -44,16 +50,16 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${poppins.variable} min-h-screen bg-background font-sans text-foreground antialiased`}>
+      <body className={`${sourceSans.variable} ${merriweather.variable} min-h-screen bg-background font-sans text-foreground antialiased`}>
         <Providers>
-          <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-slate-800 dark:bg-slate-950/95">
+          <header className="sticky top-0 z-40 border-b border-amber-200/80 bg-amber-50/90 backdrop-blur dark:border-amber-900/80 dark:bg-amber-950/85">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
               <div className="flex items-center gap-6">
                 <Link href="/" className="text-lg font-semibold">
-                  EventSphere
+                  Temple Tickets
                 </Link>
-                <nav className="hidden items-center gap-4 text-sm text-slate-600 md:flex dark:text-slate-300">
-                  <Link href="/">Events</Link>
+                <nav className="hidden items-center gap-4 text-sm text-amber-950/90 md:flex dark:text-amber-50/90">
+                  <Link href="/">Programs</Link>
                   {session?.user ? <Link href="/dashboard">My Dashboard</Link> : null}
                   {session?.user?.role === "ADMIN" || session?.user?.role === "STAFF" ? (
                     <Link href="/admin">Admin</Link>
@@ -63,7 +69,7 @@ export default async function RootLayout({
               <div className="flex items-center gap-2">
                 {session?.user ? (
                   <>
-                    <span className="hidden text-sm text-slate-500 md:inline dark:text-slate-400">{session.user.email}</span>
+                    <span className="hidden text-sm text-amber-950/85 md:inline dark:text-amber-50/85">{session.user.email}</span>
                     <Button asChild type="button" variant="outline" size="sm">
                       <Link href="/dashboard">
                         <LayoutDashboard className="mr-1 h-4 w-4" />
@@ -80,9 +86,14 @@ export default async function RootLayout({
                     </Button>
                   </>
                 ) : (
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/login">Login</Link>
-                  </Button>
+                  <>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/login">Login</Link>
+                    </Button>
+                    <Button asChild size="sm">
+                      <Link href="/register">Create Account</Link>
+                    </Button>
+                  </>
                 )}
                 <ThemeToggle />
               </div>

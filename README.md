@@ -1,8 +1,8 @@
 # Ticket Booking + Event Management (Next.js + Prisma + MySQL)
 
 Production-ready event ticketing platform with:
-- Public event browsing and Stripe Checkout
-- Idempotent Stripe webhook-based ticket issuance
+- Public event browsing and online checkout (Stripe or SumUp)
+- Idempotent webhook-based ticket issuance
 - QR + barcode ticket generation and PDF email delivery via Gmail SMTP
 - Admin panel for events, ticket types, orders, tickets, and check-in
 - Role-based auth (`ADMIN`, `STAFF`, `CUSTOMER`) with Auth.js (NextAuth)
@@ -11,7 +11,7 @@ Production-ready event ticketing platform with:
 - Next.js (App Router), TypeScript
 - Prisma + MySQL
 - Auth.js / NextAuth credentials + role-based session
-- Stripe Checkout + webhook (`checkout.session.completed`)
+- Stripe Checkout or SumUp Hosted Checkout + webhook
 - Gmail SMTP email
 - Tailwind CSS + reusable UI primitives
 - Zod + React Hook Form
@@ -36,9 +36,15 @@ cp .env.example .env
 - `NEXTAUTH_URL`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
-- `STRIPE_SECRET_KEY`
-- `STRIPE_WEBHOOK_SECRET`
+- `PAYMENT_PROVIDER` (`auto`, `stripe`, `sumup`)
+- Stripe (if using Stripe):
+  - `STRIPE_SECRET_KEY`
+  - `STRIPE_WEBHOOK_SECRET`
 - `STRIPE_PRICELESS_MODE=true`
+- SumUp (if using SumUp):
+  - `SUMUP_API_KEY`
+  - `SUMUP_MERCHANT_CODE`
+  - `SUMUP_WEBHOOK_SECRET` (optional but recommended)
 - `SMTP_HOST` (`smtp.gmail.com`)
 - `SMTP_PORT` (`465`)
 - `SMTP_SECURE` (`true`)
@@ -81,6 +87,14 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 3. Copy the webhook secret and set `STRIPE_WEBHOOK_SECRET`.
 
+## SumUp Setup
+1. Create a SumUp app and obtain:
+   - API key (`SUMUP_API_KEY`)
+   - merchant code (`SUMUP_MERCHANT_CODE`)
+2. Configure webhook URL:
+   - `http://localhost:3000/api/sumup/webhook`
+3. Set `PAYMENT_PROVIDER=sumup` to force SumUp, or keep `auto`.
+
 ## Google OAuth Setup
 1. Open Google Cloud Console and create OAuth 2.0 Web credentials.
 2. Authorized redirect URI:
@@ -108,7 +122,8 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
   - `/`
   - `/events/[id]`
   - `/checkout?eventId=...`
-  - `/success?session_id=...`
+  - `/success?session_id=...` (Stripe)
+  - `/success?provider=sumup&order_id=...` (SumUp)
   - `/t/[code]`
 - Admin:
   - `/admin`
@@ -120,9 +135,11 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
   - `/admin/checkin`
 - API:
   - `POST /api/stripe/webhook`
+  - `POST /api/sumup/webhook`
   - `POST /api/admin/checkin`
 
 ## Notes
 - Webhook idempotency is enforced via `WebhookEvent` (`stripeEventId` unique).
 - Prices are always loaded from DB during checkout creation.
+- `PAYMENT_PROVIDER=auto` chooses Stripe when both are configured, SumUp when only SumUp is configured, and Stripe when only Stripe is configured.
 - Ticket codes are random, high-entropy, and non-sequential.

@@ -10,20 +10,18 @@ import { getPublishedEvents } from "@/lib/queries";
 import { formatCurrency } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "EventSphere | Premium Event Ticket Booking",
+  title: "Temple Tickets | Buddhist Temple Events",
   description:
-    "Book concerts, conferences, and premium experiences with secure checkout, instant ticket delivery, and QR/barcode entry.",
+    "Reserve seats for temple programs, meditation retreats, and dhamma gatherings with secure checkout and instant ticket delivery.",
   keywords: [
-    "ticket booking",
-    "event management",
-    "online tickets",
-    "concert tickets",
-    "event checkout",
+    "buddhist temple events",
+    "temple ticket booking",
+    "meditation retreat tickets",
+    "dhamma program registration",
   ],
   openGraph: {
-    title: "EventSphere | Premium Event Ticket Booking",
-    description:
-      "Discover and book events with a modern, mobile-friendly experience.",
+    title: "Temple Tickets | Buddhist Temple Events",
+    description: "Discover and book temple programs with a warm, mobile-friendly experience.",
     type: "website",
   },
 };
@@ -37,7 +35,7 @@ export default async function HomePage() {
     startsAtLabel: format(event.startsAt, "PPP p"),
     coverImage:
       event.coverImage ??
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200",
+      "https://images.unsplash.com/photo-1533000759938-aa0ba70beceb?w=1200",
     minPriceLabel: formatCurrency(
       event.ticketTypes.length
         ? Math.min(...event.ticketTypes.map((type) => type.priceCents))
@@ -49,10 +47,10 @@ export default async function HomePage() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "EventSphere",
+    name: "Temple Tickets",
     url: process.env.APP_URL ?? "http://localhost:3000",
     description:
-      "Professional event booking platform with secure checkout and instant ticket delivery.",
+      "Booking platform for Buddhist temple events with secure checkout and instant ticket delivery.",
     potentialAction: {
       "@type": "SearchAction",
       target: `${process.env.APP_URL ?? "http://localhost:3000"}/?q={search_term_string}`,
@@ -62,10 +60,10 @@ export default async function HomePage() {
 
   if (events.length === 0) {
     return (
-      <div className="animate-fade-in-up rounded-2xl border border-dashed border-slate-300 p-10 text-center dark:border-slate-700">
-        <h1 className="text-2xl font-semibold">No upcoming events</h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-          Check back soon for newly announced experiences.
+      <div className="animate-fade-in-up rounded-2xl border border-dashed border-amber-300 p-10 text-center dark:border-amber-800">
+        <h1 className="text-2xl font-semibold">No upcoming temple events</h1>
+        <p className="mt-2 text-sm text-amber-950/85 dark:text-amber-50/85">
+          Check back soon for newly announced programs and ceremonies.
         </p>
       </div>
     );
@@ -73,23 +71,23 @@ export default async function HomePage() {
 
   const featureItems = [
     {
-      title: "Instant Delivery",
-      description: "Receive your ticket PDF instantly with embedded QR and barcode.",
+      title: "Instant E-Tickets",
+      description: "Receive your PDF ticket instantly with embedded QR and barcode access.",
       icon: TicketCheck,
     },
     {
-      title: "Secure Checkout",
-      description: "Stripe-powered checkout with transaction-safe webhook fulfillment.",
+      title: "Secure Offering Checkout",
+      description: "Secure online checkout for reliable and transparent temple program payments.",
       icon: ShieldCheck,
     },
     {
-      title: "Curated Events",
-      description: "Premium events with multiple ticket tiers and real-time availability.",
+      title: "Temple Programs",
+      description: "Manage dhamma talks, meditation retreats, and community events in one place.",
       icon: Sparkles,
     },
     {
-      title: "Mobile Ready",
-      description: "Responsive booking journey designed for fast mobile conversion.",
+      title: "Mobile Friendly",
+      description: "Smooth booking on any phone so devotees can register quickly.",
       icon: CalendarDays,
     },
   ];
@@ -101,26 +99,26 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/60 bg-gradient-to-br from-cyan-100 via-sky-50 to-teal-100 p-6 shadow-xl animate-gradient-shift dark:border-slate-800 dark:from-cyan-950/30 dark:via-slate-950 dark:to-teal-950/20 md:p-8">
-        <div className="animate-soft-float absolute -left-10 top-16 h-44 w-44 rounded-full bg-cyan-300/35 blur-3xl dark:bg-cyan-700/25" />
-        <div className="animate-soft-float absolute -right-10 -top-12 h-44 w-44 rounded-full bg-teal-300/35 blur-3xl dark:bg-teal-700/20" />
+      <div className="relative overflow-hidden rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 p-6 shadow-xl animate-gradient-shift dark:border-amber-900/70 dark:from-amber-950/40 dark:via-amber-900/25 dark:to-orange-950/25 md:p-8">
+        <div className="animate-soft-float absolute -left-10 top-16 h-44 w-44 rounded-full bg-amber-300/35 blur-3xl dark:bg-amber-500/25" />
+        <div className="animate-soft-float absolute -right-10 -top-12 h-44 w-44 rounded-full bg-orange-300/30 blur-3xl dark:bg-orange-600/25" />
         <div className="relative z-10 grid gap-8 lg:grid-cols-[1.15fr_1fr]">
           <div className="animate-fade-in-up">
             <Badge variant="secondary" className="mb-4">
-              Modern Ticketing Platform
+              Buddhist Temple Community
             </Badge>
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl dark:text-slate-50">
-              Beautiful Event Booking That Converts Faster
+            <h1 className="text-4xl font-semibold tracking-tight text-amber-950 md:text-5xl dark:text-amber-50">
+              Book Temple Programs with Peaceful Simplicity
             </h1>
-            <p className="mt-4 max-w-2xl text-slate-700 dark:text-slate-200">
-              Designed for trust and speed with gradient-rich visuals, secure payments, and instant ticket delivery.
+            <p className="mt-4 max-w-2xl text-amber-900/85 dark:text-amber-100/85">
+              Register for pujas, meditation sessions, and community gatherings with secure checkout and instant confirmation.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link href={`/events/${events[0].id}`}>Book Featured Event</Link>
+                <Link href={`/events/${events[0].id}`}>View Featured Program</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/dashboard">My Tickets Dashboard</Link>
+                <Link href="/dashboard">My Bookings</Link>
               </Button>
             </div>
           </div>
@@ -134,12 +132,12 @@ export default async function HomePage() {
           return (
             <Card
               key={item.title}
-              className="animate-fade-in-up border-slate-200/80 shadow-sm transition-transform duration-300 hover:-translate-y-1 dark:border-slate-800"
+              className="animate-fade-in-up shadow-sm transition-transform duration-300 hover:-translate-y-1"
               style={{ animationDelay: `${index * 80}ms` }}
             >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Icon className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                  <Icon className="h-4 w-4 text-amber-700 dark:text-amber-300" />
                   {item.title}
                 </CardTitle>
               </CardHeader>
@@ -154,9 +152,9 @@ export default async function HomePage() {
       <div className="space-y-4">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Upcoming Events</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Explore high-quality experiences and reserve tickets instantly.
+            <h2 className="text-2xl font-semibold tracking-tight">Upcoming Temple Events</h2>
+            <p className="text-sm text-amber-950/85 dark:text-amber-50/85">
+              Explore programs and reserve your seat in advance.
             </p>
           </div>
         </div>
@@ -164,7 +162,7 @@ export default async function HomePage() {
           {events.map((event, index) => (
             <Card
               key={event.id}
-              className="animate-fade-in-up overflow-hidden border-slate-200/80 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-800"
+              className="animate-fade-in-up overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               style={{ animationDelay: `${index * 70}ms` }}
             >
               <div
@@ -172,12 +170,12 @@ export default async function HomePage() {
                 style={{
                   backgroundImage: `url(${
                     event.coverImage ??
-                    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200"
+                    "https://images.unsplash.com/photo-1533000759938-aa0ba70beceb?w=1200"
                   })`,
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-950/10 to-transparent" />
-                <p className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-slate-900">
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/70 via-amber-950/15 to-transparent" />
+                <p className="absolute bottom-3 left-3 rounded-md bg-amber-50/95 px-2 py-1 text-xs font-semibold text-amber-900">
                   {format(event.startsAt, "PPP")}
                 </p>
               </div>
@@ -188,7 +186,7 @@ export default async function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="line-clamp-3 text-sm text-slate-600 dark:text-slate-300">
+                <p className="line-clamp-3 text-sm text-amber-950/90 dark:text-amber-50/90">
                   {event.description}
                 </p>
                 <div className="flex flex-wrap gap-2">

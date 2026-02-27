@@ -54,11 +54,11 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
     to: order.email,
     subject: `Your tickets for ${firstEvent.title}`,
     html: `
-      <div style="margin:0;background:#f8fafc;padding:24px 12px;font-family:'Segoe UI',Arial,sans-serif;color:#0f172a;">
+      <div style="margin:0;background:#fff7ed;padding:24px 12px;font-family:'Segoe UI',Arial,sans-serif;color:#3f2819;">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
           <tr>
-            <td style="padding:24px;background:linear-gradient(120deg,#0f172a,#0e7490);color:#ffffff;">
-              <p style="margin:0;font-size:12px;opacity:.85;letter-spacing:.8px;text-transform:uppercase;">EventSphere Tickets</p>
+            <td style="padding:24px;background:linear-gradient(120deg,#92400e,#b45309);color:#ffffff;">
+              <p style="margin:0;font-size:12px;opacity:.85;letter-spacing:.8px;text-transform:uppercase;">Temple Tickets</p>
               <h1 style="margin:8px 0 0;font-size:24px;line-height:1.2;">Your booking is confirmed</h1>
               <p style="margin:10px 0 0;font-size:14px;opacity:.95;">Thank you for your purchase. Your official ticket PDF is attached to this email.</p>
             </td>
@@ -124,7 +124,7 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
                     </div>`
                   : ""
               }
-              <a href="${getEnv().APP_URL}/dashboard" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Open My Dashboard</a>
+              <a href="${getEnv().APP_URL}/dashboard" style="display:inline-block;background:#92400e;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Open My Dashboard</a>
               <p style="margin:12px 0 0;font-size:12px;color:#64748b;">
                 Bring this ticket PDF to the event. QR/barcode is required for check-in.
               </p>

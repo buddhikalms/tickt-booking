@@ -7,6 +7,11 @@ import { processCheckoutSessionCompleted, sendTicketsForOrder } from "@/lib/orde
 import { getStripe } from "@/lib/stripe";
 
 export async function POST(request: Request) {
+  const env = getEnv();
+  if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "stripe_not_configured" }, { status: 503 });
+  }
+
   const payload = await request.text();
   const signature = (await headers()).get("stripe-signature");
   if (!signature) {
@@ -15,7 +20,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event;
   try {
-    event = getStripe().webhooks.constructEvent(payload, signature, getEnv().STRIPE_WEBHOOK_SECRET);
+    event = getStripe().webhooks.constructEvent(payload, signature, env.STRIPE_WEBHOOK_SECRET);
   } catch (error) {
     logger.error("Stripe signature verification failed", error);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

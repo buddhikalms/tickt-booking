@@ -22,18 +22,18 @@ export async function startCheckoutAction(_: unknown, formData: FormData) {
     });
 
     const session = await auth();
-    const stripeSession = await createCheckoutSession({
+    const checkoutSession = await createCheckoutSession({
       eventId: payload.eventId,
       email: payload.email,
       selections: payload.items,
       userId: session?.user?.id,
     });
 
-    if (!stripeSession.url) {
+    if (!checkoutSession.url) {
       return { ok: false, error: "Unable to create checkout URL." };
     }
 
-    return { ok: true, url: stripeSession.url };
+    return { ok: true, url: checkoutSession.url };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to start checkout.";
     return { ok: false, error: message };

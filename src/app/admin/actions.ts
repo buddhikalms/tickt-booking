@@ -4,7 +4,7 @@ import { OrderStatus, Role, TicketStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sendTicketsForOrder, syncOrderFromStripeSession } from "@/lib/order-service";
+import { sendTicketsForOrder, syncOrderFromStoredCheckoutReference } from "@/lib/order-service";
 import { eventSchema, ticketTypeSchema } from "@/lib/validators";
 
 export async function saveEventAction(eventId: string | null, formData: FormData) {
@@ -84,10 +84,10 @@ export async function syncOrderPaymentAction(orderId: string) {
     select: { stripeSessionId: true },
   });
   if (!order?.stripeSessionId) {
-    throw new Error("Order has no Stripe session ID.");
+    throw new Error("Order has no checkout reference.");
   }
 
-  await syncOrderFromStripeSession(order.stripeSessionId, "admin");
+  await syncOrderFromStoredCheckoutReference(order.stripeSessionId, "admin");
   revalidatePath("/admin/orders");
   revalidatePath("/admin/tickets");
   revalidatePath("/dashboard");

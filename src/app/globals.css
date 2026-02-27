@@ -1,30 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --accent-1: #06b6d4;
-  --accent-2: #0ea5e9;
-  --accent-3: #14b8a6;
+  --background: #fff9ed;
+  --foreground: #2f1c10;
+  --accent-1: #b45309;
+  --accent-2: #d97706;
+  --accent-3: #92400e;
 }
 
 .dark {
-  --background: #020617;
-  --foreground: #e2e8f0;
-  --accent-1: #22d3ee;
-  --accent-2: #38bdf8;
-  --accent-3: #2dd4bf;
+  --background: #1f130c;
+  --foreground: #fff1cf;
+  --accent-1: #f59e0b;
+  --accent-2: #fbbf24;
+  --accent-3: #ea580c;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins);
+  --font-sans: var(--font-source-sans);
 }
 
 body {
-  background: radial-gradient(circle at top right, rgba(14, 116, 144, 0.08), transparent 30%), var(--background);
+  background:
+    radial-gradient(circle at top right, rgba(217, 119, 6, 0.18), transparent 35%),
+    radial-gradient(circle at 10% 90%, rgba(146, 64, 14, 0.12), transparent 32%),
+    var(--background);
   color: var(--foreground);
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-merriweather), var(--font-source-sans), serif;
+  letter-spacing: -0.012em;
 }
 
 .animate-fade-in-up {
