@@ -32,8 +32,18 @@ const adapter: Adapter = {
 
 export const authOptions: NextAuthOptions = {
   adapter,
+  secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
+  logger: {
+    error(code, metadata) {
+      // A stale session cookie after secret rotation should be treated as logged out.
+      if (code === "JWT_SESSION_ERROR" && isJwtDecryptionError(metadata)) {
+        return;
+      }
+      console.error(`[next-auth][error][${code}]`, metadata);
+    },
+  },
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
@@ -98,8 +108,61 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export function auth() {
-  return getServerSession(authOptions);
+function isJwtDecryptionError(error: unknown): boolean {
+  const queue: unknown[] = [error];
+  const seen = new Set<unknown>();
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current || seen.has(current)) {
+      continue;
+    }
+    seen.add(current);
+
+    if (typeof current === "string") {
+      const value = current.toLowerCase();
+      if (value.includes("decryption operation failed") || value.includes("jwt_session_error")) {
+        return true;
+      }
+      continue;
+    }
+
+    if (typeof current !== "object") {
+      continue;
+    }
+
+    const record = current as Record<string, unknown>;
+    const name = record.name;
+    if (typeof name === "string" && name.toLowerCase().includes("jwedecryptionfailed")) {
+      return true;
+    }
+
+    const message = record.message;
+    if (typeof message === "string") {
+      const value = message.toLowerCase();
+      if (value.includes("decryption operation failed") || value.includes("jwt_session_error")) {
+        return true;
+      }
+    }
+
+    if ("cause" in record) {
+      queue.push(record.cause);
+    }
+  }
+
+  return false;
+}
+
+export async function auth() {
+  try {
+    return await getServerSession(authOptions);
+  } catch (error) {
+    // Secret rotation or stale cookies should log users out, not crash server rendering.
+    if (isJwtDecryptionError(error)) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 export async function requireRole(roles: Role[]) {

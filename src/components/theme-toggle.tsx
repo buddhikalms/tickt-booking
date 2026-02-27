@@ -15,16 +15,19 @@ export function ThemeToggle() {
 
   const isDark = resolvedTheme === "dark";
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <Button
       variant="outline"
       size="icon"
       type="button"
-      disabled={!mounted}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label="Toggle theme"
     >
-      {!mounted ? <Moon className="h-4 w-4" /> : isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </Button>
   );
 }
