@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,9 @@ type Props = {
 export function EventForm({ eventId, defaultValues }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(defaultValues?.coverImage ?? null);
+  const [removeCoverImage, setRemoveCoverImage] = useState(false);
   const form = useForm<Values>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -46,6 +49,10 @@ export function EventForm({ eventId, defaultValues }: Props) {
     formData.set("startsAt", values.startsAt);
     formData.set("endsAt", values.endsAt);
     formData.set("coverImage", values.coverImage ?? "");
+    formData.set("removeCoverImage", removeCoverImage ? "true" : "false");
+    if (coverImageFile) {
+      formData.set("coverImageFile", coverImageFile);
+    }
     formData.set("isPublished", values.isPublished ? "true" : "false");
 
     startTransition(async () => {
@@ -91,8 +98,59 @@ export function EventForm({ eventId, defaultValues }: Props) {
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="coverImage">Cover Image URL</Label>
-        <Input id="coverImage" {...form.register("coverImage")} />
+        <input type="hidden" {...form.register("coverImage")} />
+        <Label htmlFor="coverImageFile">Cover Image</Label>
+        <Input
+          id="coverImageFile"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          onChange={(event) => {
+            const file = event.target.files?.[0] ?? null;
+            setCoverImageFile(file);
+            if (!file) {
+              setPreviewUrl(removeCoverImage ? null : (defaultValues?.coverImage ?? null));
+              return;
+            }
+
+            setRemoveCoverImage(false);
+
+            const reader = new FileReader();
+            reader.onload = () => {
+              setPreviewUrl(typeof reader.result === "string" ? reader.result : null);
+            };
+            reader.readAsDataURL(file);
+          }}
+        />
+        <p className="text-xs text-slate-500 dark:text-slate-400">Upload JPG, PNG, or WEBP up to 5MB.</p>
+        {previewUrl ? (
+          <div
+            className="h-40 rounded-xl border border-slate-200 bg-cover bg-center dark:border-slate-800"
+            style={{ backgroundImage: `url(${previewUrl})` }}
+          />
+        ) : (
+          <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-slate-300 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+            No cover image selected
+          </div>
+        )}
+        {(coverImageFile || defaultValues?.coverImage) ? (
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={removeCoverImage}
+              onChange={(event) => {
+                const checked = event.target.checked;
+                setRemoveCoverImage(checked);
+                if (checked) {
+                  setCoverImageFile(null);
+                  setPreviewUrl(null);
+                } else if (!coverImageFile) {
+                  setPreviewUrl(defaultValues?.coverImage ?? null);
+                }
+              }}
+            />
+            Remove cover image
+          </label>
+        ) : null}
       </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" {...form.register("isPublished")} />

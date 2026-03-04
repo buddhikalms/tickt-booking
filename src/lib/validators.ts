@@ -21,7 +21,7 @@ export const eventSchema = z
     address: z.string().min(2),
     startsAt: z.string(),
     endsAt: z.string(),
-    coverImage: z.string().url().optional().or(z.literal("")),
+    coverImage: z.string().trim().max(191).optional().or(z.literal("")),
     isPublished: z.boolean(),
   })
   .superRefine((value, ctx) => {

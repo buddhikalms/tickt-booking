@@ -1,5 +1,8 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { OrderStatus, Role, TicketStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
@@ -8,8 +11,60 @@ import { DEFAULT_CURRENCY } from "@/lib/utils";
 import { sendTicketsForOrder, syncOrderFromStoredCheckoutReference } from "@/lib/order-service";
 import { eventSchema, ticketTypeSchema } from "@/lib/validators";
 
+const COVER_IMAGE_UPLOAD_DIR = join(process.cwd(), "public", "uploads", "events");
+const COVER_IMAGE_PUBLIC_PREFIX = "/uploads/events/";
+const MAX_COVER_IMAGE_BYTES = 5 * 1024 * 1024;
+const COVER_IMAGE_EXTENSIONS = new Map([
+  ["image/jpeg", ".jpg"],
+  ["image/png", ".png"],
+  ["image/webp", ".webp"],
+]);
+
+function isManagedCoverImage(pathname: string | null | undefined) {
+  return Boolean(pathname?.startsWith(COVER_IMAGE_PUBLIC_PREFIX));
+}
+
+async function deleteManagedCoverImage(pathname: string | null | undefined) {
+  if (!isManagedCoverImage(pathname)) return;
+
+  const filePath = join(process.cwd(), "public", pathname!.replace(/^\//, ""));
+  await unlink(filePath).catch(() => undefined);
+}
+
+async function storeCoverImage(file: File) {
+  if (file.size > MAX_COVER_IMAGE_BYTES) {
+    throw new Error("COVER_IMAGE_TOO_LARGE");
+  }
+
+  const extension = COVER_IMAGE_EXTENSIONS.get(file.type);
+  if (!extension) {
+    throw new Error("INVALID_COVER_IMAGE_TYPE");
+  }
+
+  await mkdir(COVER_IMAGE_UPLOAD_DIR, { recursive: true });
+
+  const filename = `${randomUUID()}${extension}`;
+  const filePath = join(COVER_IMAGE_UPLOAD_DIR, filename);
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  await writeFile(filePath, buffer);
+
+  return `${COVER_IMAGE_PUBLIC_PREFIX}${filename}`;
+}
+
 export async function saveEventAction(eventId: string | null, formData: FormData) {
   await requireRole([Role.ADMIN, Role.STAFF]);
+
+  const existingEvent = eventId
+    ? await prisma.event.findUnique({
+        where: { id: eventId },
+        select: { id: true, coverImage: true },
+      })
+    : null;
+
+  if (eventId && !existingEvent) {
+    throw new Error("EVENT_NOT_FOUND");
+  }
 
   const parsed = eventSchema.parse({
     title: String(formData.get("title") ?? ""),
@@ -21,6 +76,18 @@ export async function saveEventAction(eventId: string | null, formData: FormData
     coverImage: String(formData.get("coverImage") ?? ""),
     isPublished: String(formData.get("isPublished") ?? "") === "true",
   });
+  const removeCoverImage = String(formData.get("removeCoverImage") ?? "") === "true";
+  const coverImageFile = formData.get("coverImageFile");
+  const hasUploadedCoverImage = coverImageFile instanceof File && coverImageFile.size > 0;
+
+  let nextCoverImage = parsed.coverImage || null;
+  if (removeCoverImage) {
+    nextCoverImage = null;
+  }
+
+  if (hasUploadedCoverImage) {
+    nextCoverImage = await storeCoverImage(coverImageFile);
+  }
 
   const data = {
     title: parsed.title,
@@ -29,17 +96,28 @@ export async function saveEventAction(eventId: string | null, formData: FormData
     address: parsed.address,
     startsAt: new Date(parsed.startsAt),
     endsAt: new Date(parsed.endsAt),
-    coverImage: parsed.coverImage || null,
+    coverImage: nextCoverImage,
     isPublished: parsed.isPublished,
   };
 
   if (eventId) {
     await prisma.event.update({ where: { id: eventId }, data });
   } else {
-    await prisma.event.create({ data });
+    const createdEvent = await prisma.event.create({ data });
+    revalidatePath(`/events/${createdEvent.id}`);
+  }
+
+  const previousCoverImage = existingEvent?.coverImage ?? null;
+  if (previousCoverImage && previousCoverImage !== nextCoverImage) {
+    await deleteManagedCoverImage(previousCoverImage);
   }
 
   revalidatePath("/admin/events");
+  revalidatePath("/");
+  if (eventId) {
+    revalidatePath(`/events/${eventId}`);
+    revalidatePath(`/admin/events/${eventId}`);
+  }
 }
 
 export async function saveTicketTypeAction(eventId: string, ticketTypeId: string | null, formData: FormData) {
