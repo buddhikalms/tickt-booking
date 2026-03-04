@@ -33,19 +33,24 @@ const merriweather = Merriweather({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Temple Tickets",
-    template: "%s | Temple Tickets",
+    default: "Sri Sambuddha Viharaya Tickets",
+    template: "%s | Sri Sambuddha Viharaya Tickets",
   },
   description: "Ticket booking and event coordination for Buddhist temple programs, dana, and community gatherings.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
-    title: "Temple Tickets",
+    title: "Sri Sambuddha Viharaya Tickets",
     description: "Reserve seats for Buddhist temple events with secure checkout and instant confirmation.",
     type: "website",
-    siteName: "Temple Tickets",
+    siteName: "Sri Sambuddha Viharaya Tickets",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Temple Tickets",
+    title: "Sri Sambuddha Viharaya Tickets",
     description: "Book Buddhist temple events with secure checkout and instant ticket delivery.",
   },
 };
