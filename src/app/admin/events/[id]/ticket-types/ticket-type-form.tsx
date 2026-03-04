@@ -9,6 +9,7 @@ import { saveTicketTypeAction } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DEFAULT_CURRENCY, resolveCurrency } from "@/lib/utils";
 import { ticketTypeSchema } from "@/lib/validators";
 
 type Values = z.infer<typeof ticketTypeSchema>;
@@ -28,7 +29,7 @@ export function TicketTypeForm({
     defaultValues: {
       name: defaults?.name ?? "",
       priceCents: defaults?.priceCents ?? 0,
-      currency: defaults?.currency ?? "USD",
+      currency: resolveCurrency(defaults?.currency ?? DEFAULT_CURRENCY),
       quantity: defaults?.quantity ?? 100,
       isActive: defaults?.isActive ?? true,
     },

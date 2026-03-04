@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Activity, DollarSign, ShoppingCart, TicketCheck, TrendingUp } from "lucide-react";
+import { Activity, PoundSterling, ShoppingCart, TicketCheck, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { prisma } from "@/lib/prisma";
-import { formatCurrency } from "@/lib/utils";
+import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/utils";
 
 export default async function AdminDashboardPage() {
   const date30d = new Date();
@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
   );
 
   const cards = [
-    { label: "Revenue", value: formatCurrency(revenueAgg._sum.totalCents ?? 0, "USD"), icon: DollarSign },
+    { label: "Revenue", value: formatCurrency(revenueAgg._sum.totalCents ?? 0, DEFAULT_CURRENCY), icon: PoundSterling },
     { label: "Orders", value: orders.toString(), icon: ShoppingCart },
     { label: "Tickets Issued", value: tickets.toString(), icon: TicketCheck },
     { label: "Check-ins", value: checkedIn.toString(), icon: Activity },
@@ -124,7 +124,7 @@ export default async function AdminDashboardPage() {
               </div>
               <p className="mt-1 text-2xl font-semibold">{paidOrders30d._count._all}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Revenue: {formatCurrency(paidOrders30d._sum.totalCents ?? 0, "USD")}
+                Revenue: {formatCurrency(paidOrders30d._sum.totalCents ?? 0, DEFAULT_CURRENCY)}
               </p>
             </div>
 

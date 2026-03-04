@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEventById } from "@/lib/queries";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, resolveCurrency } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -63,7 +63,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       .filter((type) => type.isActive)
       .map((type) => ({
         "@type": "Offer",
-        priceCurrency: type.currency,
+        priceCurrency: resolveCurrency(type.currency),
         price: (type.priceCents / 100).toFixed(2),
         availability: "https://schema.org/InStock",
       })),

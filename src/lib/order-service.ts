@@ -12,6 +12,7 @@ import { getStripe } from "@/lib/stripe";
 import { createSumUpHostedCheckout, getSumUpCheckout } from "@/lib/sumup";
 import { generateTicketCode } from "@/lib/ticket-code";
 import { sendTicketsEmail } from "@/lib/ticket-email";
+import { resolveCurrency } from "@/lib/utils";
 import { checkoutSchema } from "@/lib/validators";
 
 type CheckoutInput = {
@@ -59,12 +60,12 @@ export async function createCheckoutSession(input: CheckoutInput) {
       quantity: item.quantity,
       unitPriceCents: ticketType.priceCents,
       name: ticketType.name,
-      currency: ticketType.currency,
+      currency: resolveCurrency(ticketType.currency),
     };
   });
 
   const totalCents = normalizedItems.reduce((sum, item) => sum + item.quantity * item.unitPriceCents, 0);
-  const currency = normalizedItems[0].currency.toLowerCase();
+  const currency = resolveCurrency(normalizedItems[0].currency).toLowerCase();
 
   const order = await prisma.$transaction(async (tx) => {
     return tx.order.create({

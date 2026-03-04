@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
 import { Merriweather, Source_Sans_3 } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard } from "lucide-react";
+import { Facebook, Globe, LayoutDashboard, Mail, MapPin, Phone } from "lucide-react";
 import { Providers } from "@/components/providers";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/auth";
 import "./globals.css";
+
+const footerSocialLinks = [
+  {
+    href: "https://www.facebook.com/SriSambuddhaVihara/",
+    label: "Facebook",
+    icon: Facebook,
+  },
+] as const;
 
 const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
@@ -55,8 +64,15 @@ export default async function RootLayout({
           <header className="sticky top-0 z-40 border-b border-amber-200/80 bg-amber-50/90 backdrop-blur dark:border-amber-900/80 dark:bg-amber-950/85">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
               <div className="flex items-center gap-6">
-                <Link href="/" className="text-lg font-semibold">
-                  Temple Tickets
+                <Link href="/" className="flex items-center" aria-label="Temple Tickets home">
+                  <Image
+                    src="/srisambuddhaviharaya_Web_logo.png"
+                    alt="Sri Sambuddha Viharaya logo"
+                    width={375}
+                    height={124}
+                    priority
+                    className="h-10 w-auto"
+                  />
                 </Link>
                 <nav className="hidden items-center gap-4 text-sm text-amber-950/90 md:flex dark:text-amber-50/90">
                   <Link href="/">Programs</Link>
@@ -100,6 +116,87 @@ export default async function RootLayout({
             </div>
           </header>
           <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6">{children}</main>
+          <footer className="border-t border-amber-200/80 bg-amber-50/85 dark:border-amber-900/70 dark:bg-amber-950/80">
+            <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:grid-cols-[1.2fr_1fr_0.9fr] md:px-6">
+              <div className="space-y-4">
+                <Link href="/" className="inline-flex items-center" aria-label="Temple Tickets home">
+                  <Image
+                    src="/srisambuddhaviharaya_Web_logo.png"
+                    alt="Sri Sambuddha Viharaya logo"
+                    width={375}
+                    height={124}
+                    className="h-12 w-auto"
+                  />
+                </Link>
+                <div className="space-y-2">
+                  <p className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">
+                    Liverpool Sri Sambuddha Buddhist Temple Foundation
+                  </p>
+                  <p className="max-w-xl text-sm leading-6 text-amber-950/80 dark:text-amber-50/75">
+                    Reserve seats for temple programs, dana, and community gatherings with secure checkout and instant confirmations.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">Contact</h2>
+                <div className="space-y-3 text-sm text-amber-950/85 dark:text-amber-50/80">
+                  <a
+                    href="https://maps.google.com/?q=120%20Carr%20Lane%20East,%20Liverpool%20L11%204SL"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-start gap-3 transition-colors hover:text-amber-700 dark:hover:text-amber-300"
+                  >
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>120 Carr Lane East, Liverpool L11 4SL</span>
+                  </a>
+                  <a
+                    href="tel:01514765227"
+                    className="flex items-center gap-3 transition-colors hover:text-amber-700 dark:hover:text-amber-300"
+                  >
+                    <Phone className="h-4 w-4 shrink-0" />
+                    <span>0151 476 5227</span>
+                  </a>
+                  <a
+                    href="mailto:info@srisambuddhaviharaya.com"
+                    className="flex items-center gap-3 transition-colors hover:text-amber-700 dark:hover:text-amber-300"
+                  >
+                    <Mail className="h-4 w-4 shrink-0" />
+                    <span>info@srisambuddhaviharaya.com</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">Follow</h2>
+                <div className="flex flex-wrap gap-3">
+                  {footerSocialLinks.map(({ href, icon: Icon, label }) => (
+                    <a
+                      key={href}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={label}
+                      className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/80 px-4 py-2 text-sm font-medium text-amber-950 transition-colors hover:border-amber-500 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-50 dark:hover:border-amber-500 dark:hover:text-amber-200"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span>{label}</span>
+                    </a>
+                  ))}
+                  <a
+                    href="https://www.srisambuddhaviharaya.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Official website"
+                    className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/80 px-4 py-2 text-sm font-medium text-amber-950 transition-colors hover:border-amber-500 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-50 dark:hover:border-amber-500 dark:hover:text-amber-200"
+                  >
+                    <Globe className="h-4 w-4" />
+                    <span>Official Website</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>

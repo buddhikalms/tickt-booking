@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPublishedEvents } from "@/lib/queries";
-import { formatCurrency } from "@/lib/utils";
+import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Temple Tickets | Buddhist Temple Events",
@@ -40,7 +40,7 @@ export default async function HomePage() {
       event.ticketTypes.length
         ? Math.min(...event.ticketTypes.map((type) => type.priceCents))
         : 0,
-      event.ticketTypes[0]?.currency ?? "USD",
+      event.ticketTypes[0]?.currency ?? DEFAULT_CURRENCY,
     ),
   }));
 

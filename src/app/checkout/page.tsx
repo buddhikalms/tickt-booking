@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { getEventById } from "@/lib/queries";
+import { resolveCurrency } from "@/lib/utils";
 import { CheckoutForm } from "./checkout-form";
 
 export default async function CheckoutPage({
@@ -43,7 +44,7 @@ export default async function CheckoutPage({
                 id: type.id,
                 name: type.name,
                 priceCents: type.priceCents,
-                currency: type.currency,
+                currency: resolveCurrency(type.currency),
                 remaining: Math.max(type.quantity - type.sold, 0),
               }))}
           />

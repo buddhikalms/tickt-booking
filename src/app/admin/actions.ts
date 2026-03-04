@@ -4,6 +4,7 @@ import { OrderStatus, Role, TicketStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { DEFAULT_CURRENCY } from "@/lib/utils";
 import { sendTicketsForOrder, syncOrderFromStoredCheckoutReference } from "@/lib/order-service";
 import { eventSchema, ticketTypeSchema } from "@/lib/validators";
 
@@ -47,7 +48,7 @@ export async function saveTicketTypeAction(eventId: string, ticketTypeId: string
   const parsed = ticketTypeSchema.parse({
     name: String(formData.get("name") ?? ""),
     priceCents: Number(formData.get("priceCents") ?? 0),
-    currency: String(formData.get("currency") ?? "USD"),
+    currency: String(formData.get("currency") ?? DEFAULT_CURRENCY),
     quantity: Number(formData.get("quantity") ?? 0),
     isActive: String(formData.get("isActive") ?? "") === "true",
   });

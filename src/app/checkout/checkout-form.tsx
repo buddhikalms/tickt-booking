@@ -9,7 +9,7 @@ import { startCheckoutAction } from "@/app/checkout/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { formatCurrency } from "@/lib/utils";
+import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/utils";
 
 const schema = z.object({
   email: z.string().email(),
@@ -152,7 +152,7 @@ export function CheckoutForm({
         ))}
       </div>
       <div className="rounded-xl border border-slate-200 p-4 text-sm dark:border-slate-800">
-        Total: <strong className="text-base">{formatCurrency(total, ticketTypes[0]?.currency ?? "USD")}</strong>
+        Total: <strong className="text-base">{formatCurrency(total, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "Redirecting..." : "Proceed to Stripe Checkout"}

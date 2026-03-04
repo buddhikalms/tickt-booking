@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { auth } from "@/lib/auth";
 import { syncOrderFromStoredCheckoutReference } from "@/lib/order-service";
 import { prisma } from "@/lib/prisma";
-import { formatCurrency } from "@/lib/utils";
+import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/utils";
 
 export default async function UserDashboardPage() {
   const session = await auth();
@@ -61,7 +61,7 @@ export default async function UserDashboardPage() {
   const used = tickets.filter((ticket) => ticket.status === "USED").length;
 
   const stats = [
-    { label: "Total Spent", value: formatCurrency(paidAgg._sum.totalCents ?? 0, "USD"), icon: Wallet },
+    { label: "Total Spent", value: formatCurrency(paidAgg._sum.totalCents ?? 0, DEFAULT_CURRENCY), icon: Wallet },
     { label: "Tickets", value: `${tickets.length}`, icon: Ticket },
     { label: "Upcoming", value: `${upcoming}`, icon: Clock3 },
     { label: "Used", value: `${used}`, icon: CheckCircle2 },
