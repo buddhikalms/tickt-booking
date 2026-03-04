@@ -5,7 +5,7 @@ const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-0.5 t
   variants: {
     variant: {
       default: "bg-amber-700 text-amber-50 dark:bg-amber-500 dark:text-amber-950",
-      secondary: "bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-100",
+      secondary: "border border-[var(--border-soft)] bg-[var(--surface-panel)] text-[var(--text-soft)] dark:text-[var(--text-soft)]",
       success: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200",
       warning: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
       destructive: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",

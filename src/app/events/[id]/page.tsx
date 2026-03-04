@@ -109,8 +109,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             <CardTitle className="text-2xl">About This Event</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="leading-relaxed text-slate-700 dark:text-slate-200">{event.description}</p>
-            <div className="grid gap-3 rounded-xl border border-slate-200 p-4 text-sm text-slate-700 dark:border-slate-800 dark:text-slate-300">
+            <p className="theme-soft-text leading-relaxed">{event.description}</p>
+            <div className="theme-panel theme-soft-text grid gap-3 rounded-xl border p-4 text-sm">
               <p><strong>Venue:</strong> {event.venue}</p>
               <p><strong>Address:</strong> {event.address}</p>
               <p><strong>Starts:</strong> {format(event.startsAt, "PPP p")}</p>
@@ -127,13 +127,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             {event.ticketTypes.filter((type) => type.isActive).map((type) => (
               <div
                 key={type.id}
-                className="rounded-xl border border-slate-200 p-3 transition-all hover:shadow-md dark:border-slate-800"
+                className="theme-panel rounded-xl border p-3 transition-all hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
                   <p className="font-medium">{type.name}</p>
                   <Badge variant="secondary">{formatCurrency(type.priceCents, type.currency)}</Badge>
                 </div>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                <p className="theme-muted-text mt-1 text-xs">
                   Remaining: {Math.max(type.quantity - type.sold, 0)}
                 </p>
                 <Button asChild className="mt-3 w-full" size="sm">

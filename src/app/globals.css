@@ -6,6 +6,16 @@
   --accent-1: #b45309;
   --accent-2: #d97706;
   --accent-3: #92400e;
+  --surface-card: rgba(255, 255, 255, 0.82);
+  --surface-panel: rgba(255, 246, 232, 0.88);
+  --surface-shell: rgba(255, 250, 242, 0.9);
+  --surface-overlay: rgba(255, 255, 255, 0.74);
+  --border-soft: rgba(180, 83, 9, 0.18);
+  --border-strong: rgba(146, 64, 14, 0.28);
+  --text-soft: rgba(63, 40, 25, 0.88);
+  --text-muted: rgba(92, 67, 50, 0.78);
+  --shadow-soft: rgba(120, 53, 15, 0.16);
+  color-scheme: light;
 }
 
 .dark {
@@ -14,6 +24,16 @@
   --accent-1: #f59e0b;
   --accent-2: #fbbf24;
   --accent-3: #ea580c;
+  --surface-card: rgba(42, 27, 17, 0.8);
+  --surface-panel: rgba(58, 36, 22, 0.82);
+  --surface-shell: rgba(35, 22, 13, 0.88);
+  --surface-overlay: rgba(58, 36, 22, 0.64);
+  --border-soft: rgba(245, 158, 11, 0.2);
+  --border-strong: rgba(251, 191, 36, 0.3);
+  --text-soft: rgba(255, 241, 207, 0.9);
+  --text-muted: rgba(243, 221, 178, 0.76);
+  --shadow-soft: rgba(0, 0, 0, 0.42);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -24,12 +44,52 @@
 
 body {
   background:
-    radial-gradient(circle at top right, rgba(217, 119, 6, 0.18), transparent 35%),
-    radial-gradient(circle at 10% 90%, rgba(146, 64, 14, 0.12), transparent 32%),
+    radial-gradient(circle at top right, rgba(217, 119, 6, 0.14), transparent 35%),
+    radial-gradient(circle at 10% 90%, rgba(146, 64, 14, 0.1), transparent 32%),
     var(--background);
   color: var(--foreground);
   line-height: 1.6;
   text-rendering: optimizeLegibility;
+}
+
+input,
+textarea,
+select,
+button {
+  color: inherit;
+}
+
+.theme-card {
+  background: var(--surface-card);
+  border-color: var(--border-soft);
+  box-shadow: 0 22px 50px -34px var(--shadow-soft);
+}
+
+.theme-panel {
+  background: var(--surface-panel);
+  border-color: var(--border-soft);
+}
+
+.theme-shell {
+  background: var(--surface-shell);
+  border-color: var(--border-soft);
+}
+
+.theme-banner {
+  background: linear-gradient(135deg, rgba(251, 243, 217, 0.92), rgba(255, 255, 255, 0.78));
+  border-color: var(--border-strong);
+}
+
+.dark .theme-banner {
+  background: linear-gradient(135deg, rgba(79, 47, 22, 0.78), rgba(31, 19, 12, 0.86));
+}
+
+.theme-soft-text {
+  color: var(--text-soft);
+}
+
+.theme-muted-text {
+  color: var(--text-muted);
 }
 
 h1,

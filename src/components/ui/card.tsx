@@ -4,7 +4,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <div
       className={cn(
-        "rounded-xl border border-amber-200/80 bg-white/90 shadow-sm dark:border-amber-900/70 dark:bg-amber-950/30",
+        "theme-card rounded-xl border text-[var(--foreground)]",
         className,
       )}
       {...props}
@@ -21,7 +21,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 }
 
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm text-amber-950/85 dark:text-amber-50/85", className)} {...props} />;
+  return <p className={cn("theme-muted-text text-sm", className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

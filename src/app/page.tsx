@@ -60,9 +60,9 @@ export default async function HomePage() {
 
   if (events.length === 0) {
     return (
-      <div className="animate-fade-in-up rounded-2xl border border-dashed border-amber-300 p-10 text-center dark:border-amber-800">
+      <div className="theme-panel animate-fade-in-up rounded-2xl border border-dashed p-10 text-center">
         <h1 className="text-2xl font-semibold">No upcoming temple events</h1>
-        <p className="mt-2 text-sm text-amber-950/85 dark:text-amber-50/85">
+        <p className="theme-muted-text mt-2 text-sm">
           Check back soon for newly announced programs and ceremonies.
         </p>
       </div>
@@ -99,7 +99,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      <div className="relative overflow-hidden rounded-3xl border border-amber-200/80 bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 p-6 shadow-xl animate-gradient-shift dark:border-amber-900/70 dark:from-amber-950/40 dark:via-amber-900/25 dark:to-orange-950/25 md:p-8">
+      <div className="theme-banner relative overflow-hidden rounded-3xl border p-6 shadow-xl animate-gradient-shift md:p-8">
         <div className="animate-soft-float absolute -left-10 top-16 h-44 w-44 rounded-full bg-amber-300/35 blur-3xl dark:bg-amber-500/25" />
         <div className="animate-soft-float absolute -right-10 -top-12 h-44 w-44 rounded-full bg-orange-300/30 blur-3xl dark:bg-orange-600/25" />
         <div className="relative z-10 grid gap-8 lg:grid-cols-[1.15fr_1fr]">
@@ -107,10 +107,10 @@ export default async function HomePage() {
             <Badge variant="secondary" className="mb-4">
               Buddhist Temple Community
             </Badge>
-            <h1 className="text-4xl font-semibold tracking-tight text-amber-950 md:text-5xl dark:text-amber-50">
+            <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
               Book Temple Programs with Peaceful Simplicity
             </h1>
-            <p className="mt-4 max-w-2xl text-amber-900/85 dark:text-amber-100/85">
+            <p className="theme-soft-text mt-4 max-w-2xl">
               Register for pujas, meditation sessions, and community gatherings with secure checkout and instant confirmation.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -153,7 +153,7 @@ export default async function HomePage() {
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">Upcoming Temple Events</h2>
-            <p className="text-sm text-amber-950/85 dark:text-amber-50/85">
+            <p className="theme-muted-text text-sm">
               Explore programs and reserve your seat in advance.
             </p>
           </div>
@@ -186,7 +186,7 @@ export default async function HomePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="line-clamp-3 text-sm text-amber-950/90 dark:text-amber-50/90">
+                <p className="theme-soft-text line-clamp-3 text-sm">
                   {event.description}
                 </p>
                 <div className="flex flex-wrap gap-2">

@@ -10,8 +10,10 @@ import {
 import { prisma } from "@/lib/prisma";
 import { getStripe } from "@/lib/stripe";
 import { createSumUpHostedCheckout, getSumUpCheckout } from "@/lib/sumup";
+import { sendAdminTicketNotificationEmail } from "@/lib/admin-ticket-email";
 import { generateTicketCode } from "@/lib/ticket-code";
 import { sendTicketsEmail } from "@/lib/ticket-email";
+import { calculateOrderTotals } from "@/lib/pricing";
 import { resolveCurrency } from "@/lib/utils";
 import { checkoutSchema } from "@/lib/validators";
 
@@ -64,7 +66,8 @@ export async function createCheckoutSession(input: CheckoutInput) {
     };
   });
 
-  const totalCents = normalizedItems.reduce((sum, item) => sum + item.quantity * item.unitPriceCents, 0);
+  const subtotalCents = normalizedItems.reduce((sum, item) => sum + item.quantity * item.unitPriceCents, 0);
+  const totals = calculateOrderTotals(subtotalCents);
   const currency = resolveCurrency(normalizedItems[0].currency).toLowerCase();
 
   const order = await prisma.$transaction(async (tx) => {
@@ -73,7 +76,7 @@ export async function createCheckoutSession(input: CheckoutInput) {
         userId: input.userId ?? null,
         email: parsed.email,
         status: OrderStatus.PENDING,
-        totalCents,
+        totalCents: totals.totalCents,
         currency: currency.toUpperCase(),
         items: {
           create: normalizedItems.map((item) => ({
@@ -108,7 +111,22 @@ export async function createCheckoutSession(input: CheckoutInput) {
             name: `${event.title} - ${item.name}`,
           },
         },
-      })),
+      })).concat(
+        totals.gatewayFeeCents > 0
+          ? [
+              {
+                quantity: 1,
+                price_data: {
+                  currency,
+                  unit_amount: totals.gatewayFeeCents,
+                  product_data: {
+                    name: "Payment Gateway Charge",
+                  },
+                },
+              },
+            ]
+          : [],
+      ),
     });
 
     await prisma.order.update({
@@ -126,7 +144,7 @@ export async function createCheckoutSession(input: CheckoutInput) {
   const ticketCount = normalizedItems.reduce((sum, item) => sum + item.quantity, 0);
   const checkout = await createSumUpHostedCheckout({
     checkoutReference: order.id,
-    amountCents: totalCents,
+    amountCents: totals.totalCents,
     currency: currency.toUpperCase(),
     description: `${event.title} (${ticketCount} ticket${ticketCount > 1 ? "s" : ""})`,
     redirectUrl: `${getEnv().APP_URL}/success?provider=sumup&order_id=${order.id}`,
@@ -252,10 +270,11 @@ export async function processCheckoutSessionCompleted(
   );
 }
 
-export async function sendTicketsForOrder(orderId: string) {
+export async function sendTicketsForOrder(orderId: string, options?: { notifyAdmin?: boolean }) {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
+      items: true,
       tickets: {
         include: {
           event: true,
@@ -273,6 +292,14 @@ export async function sendTicketsForOrder(orderId: string) {
   }
 
   await sendTicketsEmail(order, order.tickets);
+
+  if (options?.notifyAdmin) {
+    try {
+      await sendAdminTicketNotificationEmail(order, order.tickets);
+    } catch (error) {
+      logger.error("Admin notification email failed after ticket issuance", { orderId, error });
+    }
+  }
 }
 
 async function syncOrderFromStripeCheckout(
@@ -319,7 +346,7 @@ async function syncOrderFromStripeCheckout(
   );
 
   if (!result.duplicate && result.order) {
-    await sendTicketsForOrder(result.order.id);
+    await sendTicketsForOrder(result.order.id, { notifyAdmin: true });
     return {
       ok: true,
       paid: true,
@@ -395,7 +422,7 @@ async function syncOrderFromSumUpCheckout(
   );
 
   if (!result.duplicate && result.order) {
-    await sendTicketsForOrder(result.order.id);
+    await sendTicketsForOrder(result.order.id, { notifyAdmin: true });
     return {
       ok: true,
       paid: true,

@@ -17,13 +17,13 @@ export function TableBody({ className, ...props }: React.HTMLAttributes<HTMLTabl
 }
 
 export function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className={cn("border-b border-slate-200 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-900/70", className)} {...props} />;
+  return <tr className={cn("border-b border-[var(--border-soft)] transition-colors hover:bg-[var(--surface-overlay)]", className)} {...props} />;
 }
 
 export function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("h-12 px-4 text-left align-middle font-medium text-slate-500 dark:text-slate-400", className)} {...props} />;
+  return <th className={cn("h-12 px-4 text-left align-middle font-medium text-[var(--text-muted)]", className)} {...props} />;
 }
 
 export function TableCell({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn("p-4 align-middle", className)} {...props} />;
+  return <td className={cn("p-4 align-middle text-[var(--text-soft)]", className)} {...props} />;
 }

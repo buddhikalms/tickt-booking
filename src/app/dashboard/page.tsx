@@ -69,9 +69,9 @@ export default async function UserDashboardPage() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-2xl border border-cyan-200/60 bg-gradient-to-r from-cyan-50 to-sky-100 p-6 shadow-lg dark:border-cyan-900/30 dark:from-cyan-950/20 dark:to-sky-950/20">
+      <div className="theme-banner rounded-2xl border p-6 shadow-lg">
         <h1 className="text-2xl font-semibold">My Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+        <p className="theme-muted-text mt-1 text-sm">
           Manage your bookings, upcoming events, and ticket access in one place.
         </p>
       </div>
@@ -83,10 +83,10 @@ export default async function UserDashboardPage() {
             <Card key={stat.label} className="border-slate-200/80 shadow-sm dark:border-slate-800">
               <CardContent className="flex items-center justify-between pt-6">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+                  <p className="theme-muted-text text-sm">{stat.label}</p>
                   <p className="text-2xl font-semibold">{stat.value}</p>
                 </div>
-                <Icon className="h-5 w-5 text-slate-500" />
+                <Icon className="theme-muted-text h-5 w-5" />
               </CardContent>
             </Card>
           );
@@ -101,10 +101,10 @@ export default async function UserDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {tickets.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400">No tickets found yet.</p>
+              <p className="theme-muted-text text-sm">No tickets found yet.</p>
             ) : (
               tickets.map((ticket) => (
-                <div key={ticket.id} className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+                <div key={ticket.id} className="theme-panel rounded-xl border p-3">
                   <div className="flex items-center justify-between">
                     <p className="font-medium">{ticket.event.title}</p>
                     <Badge
@@ -115,7 +115,7 @@ export default async function UserDashboardPage() {
                       {ticket.status}
                     </Badge>
                   </div>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="theme-muted-text mt-1 text-xs">
                     {ticket.ticketType.name} • {format(ticket.event.startsAt, "PPP p")}
                   </p>
                   <Button asChild variant="outline" size="sm" className="mt-3">
@@ -144,7 +144,7 @@ export default async function UserDashboardPage() {
               <TableBody>
                 {orders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-slate-500">
+                    <TableCell colSpan={3} className="theme-muted-text text-center">
                       No orders found.
                     </TableCell>
                   </TableRow>

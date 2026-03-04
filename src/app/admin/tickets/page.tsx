@@ -36,7 +36,7 @@ export default async function AdminTicketsPage({
     <section className="space-y-4">
       <h1 className="text-2xl font-semibold">Tickets</h1>
       <form className="grid gap-2 md:grid-cols-4">
-        <select name="eventId" defaultValue={eventId ?? ""} className="h-10 rounded-md border border-slate-300 bg-white px-2 dark:border-slate-700 dark:bg-slate-900">
+        <select name="eventId" defaultValue={eventId ?? ""} className="h-10 rounded-md border border-slate-300 bg-white px-2 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
           <option value="">All events</option>
           {events.map((event) => (
             <option key={event.id} value={event.id}>
@@ -44,7 +44,7 @@ export default async function AdminTicketsPage({
             </option>
           ))}
         </select>
-        <select name="status" defaultValue={status ?? ""} className="h-10 rounded-md border border-slate-300 bg-white px-2 dark:border-slate-700 dark:bg-slate-900">
+        <select name="status" defaultValue={status ?? ""} className="h-10 rounded-md border border-slate-300 bg-white px-2 text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
           <option value="">All status</option>
           <option value="VALID">VALID</option>
           <option value="USED">USED</option>

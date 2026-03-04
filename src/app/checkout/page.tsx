@@ -26,7 +26,7 @@ export default async function CheckoutPage({
 
   return (
     <section className="mx-auto max-w-3xl animate-fade-in-up">
-      <Card className="border-slate-200/80 shadow-xl dark:border-slate-800">
+      <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="text-2xl">Secure Checkout</CardTitle>
         </CardHeader>

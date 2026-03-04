@@ -9,6 +9,11 @@ import { startCheckoutAction } from "@/app/checkout/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  PAYMENT_GATEWAY_FIXED_FEE_CENTS,
+  PAYMENT_GATEWAY_FEE_RATE,
+  calculateOrderTotals,
+} from "@/lib/pricing";
 import { DEFAULT_CURRENCY, formatCurrency } from "@/lib/utils";
 
 const schema = z.object({
@@ -54,8 +59,9 @@ export function CheckoutForm({
     defaultValues: { email: defaultEmail },
   });
 
-  const total = useMemo(() => {
-    return ticketTypes.reduce((sum, type) => sum + (quantities[type.id] ?? 0) * type.priceCents, 0);
+  const totals = useMemo(() => {
+    const subtotalCents = ticketTypes.reduce((sum, type) => sum + (quantities[type.id] ?? 0) * type.priceCents, 0);
+    return calculateOrderTotals(subtotalCents);
   }, [quantities, ticketTypes]);
 
   function submit(data: FormValues) {
@@ -86,10 +92,10 @@ export function CheckoutForm({
 
   return (
     <form className="space-y-5" onSubmit={form.handleSubmit(submit)}>
-      <div className="rounded-xl border border-cyan-200/60 bg-gradient-to-r from-cyan-50 to-sky-50 p-4 dark:border-cyan-900/40 dark:from-cyan-950/30 dark:to-sky-950/30">
+      <div className="theme-banner rounded-xl border p-4">
         <p className="text-sm font-semibold">{eventTitle}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-300">{eventDateLabel}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-300">{venueLabel}</p>
+        <p className="theme-muted-text text-xs">{eventDateLabel}</p>
+        <p className="theme-muted-text text-xs">{venueLabel}</p>
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">Buyer Email</Label>
@@ -100,10 +106,10 @@ export function CheckoutForm({
       </div>
       <div className="space-y-3">
         {ticketTypes.map((type) => (
-          <div key={type.id} className="flex items-center justify-between rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <div key={type.id} className="theme-panel flex items-center justify-between rounded-xl border p-4">
             <div>
               <p className="font-semibold">{type.name}</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="theme-muted-text text-sm">
                 {formatCurrency(type.priceCents, type.currency)} | Remaining {type.remaining}
               </p>
             </div>
@@ -151,11 +157,25 @@ export function CheckoutForm({
           </div>
         ))}
       </div>
-      <div className="rounded-xl border border-slate-200 p-4 text-sm dark:border-slate-800">
-        Total: <strong className="text-base">{formatCurrency(total, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
+      <div className="theme-panel rounded-xl border p-4 text-sm">
+        <div className="flex items-center justify-between">
+          <span>Tickets subtotal</span>
+          <strong>{formatCurrency(totals.subtotalCents, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
+        </div>
+        <div className="theme-muted-text mt-2 flex items-center justify-between">
+          <span>
+            Payment gateway charge ({(PAYMENT_GATEWAY_FEE_RATE * 100).toFixed(1)}% +{" "}
+            {formatCurrency(PAYMENT_GATEWAY_FIXED_FEE_CENTS, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)})
+          </span>
+          <strong>{formatCurrency(totals.gatewayFeeCents, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
+        </div>
+        <div className="mt-3 flex items-center justify-between border-t border-[var(--border-soft)] pt-3 text-base">
+          <span>Total</span>
+          <strong>{formatCurrency(totals.totalCents, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
+        </div>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Redirecting..." : "Proceed to Stripe Checkout"}
+        {isPending ? "Redirecting..." : "Proceed to Checkout"}
       </Button>
     </form>
   );

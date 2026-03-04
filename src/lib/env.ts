@@ -20,6 +20,7 @@ const envSchema = z.object({
   SUMUP_WEBHOOK_SECRET: optionalNonEmptyString,
   RESEND_API_KEY: z.string().min(1),
   EMAIL_FROM: z.string().min(1),
+  ADMIN_NOTIFICATION_EMAIL: optionalNonEmptyString,
   APP_URL: z.string().url(),
 });
 
@@ -45,6 +46,7 @@ export function getEnv() {
     SUMUP_WEBHOOK_SECRET: process.env.SUMUP_WEBHOOK_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    ADMIN_NOTIFICATION_EMAIL: process.env.ADMIN_NOTIFICATION_EMAIL,
     APP_URL: process.env.APP_URL,
   });
 

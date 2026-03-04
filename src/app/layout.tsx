@@ -61,7 +61,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${sourceSans.variable} ${merriweather.variable} min-h-screen bg-background font-sans text-foreground antialiased`}>
         <Providers>
-          <header className="sticky top-0 z-40 border-b border-amber-200/80 bg-amber-50/90 backdrop-blur dark:border-amber-900/80 dark:bg-amber-950/85">
+          <header className="theme-shell sticky top-0 z-40 border-b backdrop-blur">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
               <div className="flex items-center gap-6">
                 <Link href="/" className="flex items-center" aria-label="Temple Tickets home">
@@ -74,7 +74,7 @@ export default async function RootLayout({
                     className="h-10 w-auto"
                   />
                 </Link>
-                <nav className="hidden items-center gap-4 text-sm text-amber-950/90 md:flex dark:text-amber-50/90">
+                <nav className="theme-soft-text hidden items-center gap-4 text-sm md:flex">
                   <Link href="/">Programs</Link>
                   {session?.user ? <Link href="/dashboard">My Dashboard</Link> : null}
                   {session?.user?.role === "ADMIN" || session?.user?.role === "STAFF" ? (
@@ -85,7 +85,7 @@ export default async function RootLayout({
               <div className="flex items-center gap-2">
                 {session?.user ? (
                   <>
-                    <span className="hidden text-sm text-amber-950/85 md:inline dark:text-amber-50/85">{session.user.email}</span>
+                    <span className="theme-muted-text hidden text-sm md:inline">{session.user.email}</span>
                     <Button asChild type="button" variant="outline" size="sm">
                       <Link href="/dashboard">
                         <LayoutDashboard className="mr-1 h-4 w-4" />
@@ -116,7 +116,7 @@ export default async function RootLayout({
             </div>
           </header>
           <main className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6">{children}</main>
-          <footer className="border-t border-amber-200/80 bg-amber-50/85 dark:border-amber-900/70 dark:bg-amber-950/80">
+          <footer className="theme-shell border-t">
             <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:grid-cols-[1.2fr_1fr_0.9fr] md:px-6">
               <div className="space-y-4">
                 <Link href="/" className="inline-flex items-center" aria-label="Temple Tickets home">
@@ -129,18 +129,18 @@ export default async function RootLayout({
                   />
                 </Link>
                 <div className="space-y-2">
-                  <p className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">
+                  <p className="font-serif text-lg font-bold">
                     Liverpool Sri Sambuddha Buddhist Temple Foundation
                   </p>
-                  <p className="max-w-xl text-sm leading-6 text-amber-950/80 dark:text-amber-50/75">
+                  <p className="theme-muted-text max-w-xl text-sm leading-6">
                     Reserve seats for temple programs, dana, and community gatherings with secure checkout and instant confirmations.
                   </p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h2 className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">Contact</h2>
-                <div className="space-y-3 text-sm text-amber-950/85 dark:text-amber-50/80">
+                <h2 className="font-serif text-lg font-bold">Contact</h2>
+                <div className="theme-soft-text space-y-3 text-sm">
                   <a
                     href="https://maps.google.com/?q=120%20Carr%20Lane%20East,%20Liverpool%20L11%204SL"
                     target="_blank"
@@ -168,7 +168,7 @@ export default async function RootLayout({
               </div>
 
               <div className="space-y-4">
-                <h2 className="font-serif text-lg font-bold text-amber-950 dark:text-amber-50">Follow</h2>
+                <h2 className="font-serif text-lg font-bold">Follow</h2>
                 <div className="flex flex-wrap gap-3">
                   {footerSocialLinks.map(({ href, icon: Icon, label }) => (
                     <a
@@ -177,7 +177,7 @@ export default async function RootLayout({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={label}
-                      className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/80 px-4 py-2 text-sm font-medium text-amber-950 transition-colors hover:border-amber-500 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-50 dark:hover:border-amber-500 dark:hover:text-amber-200"
+                      className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--surface-overlay)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-200"
                     >
                       <Icon className="h-4 w-4" />
                       <span>{label}</span>
@@ -188,7 +188,7 @@ export default async function RootLayout({
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Official website"
-                    className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/80 px-4 py-2 text-sm font-medium text-amber-950 transition-colors hover:border-amber-500 hover:text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-50 dark:hover:border-amber-500 dark:hover:text-amber-200"
+                    className="inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--surface-overlay)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-200"
                   >
                     <Globe className="h-4 w-4" />
                     <span>Official Website</span>

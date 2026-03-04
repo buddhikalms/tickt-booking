@@ -23,64 +23,140 @@ type TicketPdfItem = {
   barcodePng: Buffer;
 };
 
+const PDF_TEMPLATE_NAME = "Sri Sambuddha Viharaya Tickets";
+
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
-    backgroundColor: "#f8fafc",
+    padding: 26,
+    backgroundColor: "#f6efe4",
     fontSize: 11,
   },
   card: {
-    borderRadius: 16,
-    border: "1 solid #e2e8f0",
+    borderRadius: 22,
+    border: "1 solid #ead8bf",
     backgroundColor: "#ffffff",
-    padding: 18,
+    overflow: "hidden",
+  },
+  hero: {
+    paddingTop: 18,
+    paddingBottom: 18,
+    paddingHorizontal: 20,
+    backgroundColor: "#7c3f12",
+  },
+  heroLabel: {
+    fontSize: 10,
+    color: "#fde68a",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  heroTitle: {
+    marginTop: 8,
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#ffffff",
+  },
+  heroSubTitle: {
+    marginTop: 4,
+    fontSize: 11,
+    color: "#ffedd5",
+  },
+  section: {
+    padding: 20,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 14,
+    alignItems: "flex-start",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: "#0f172a",
+  eventMeta: {
+    flexGrow: 1,
+    paddingRight: 16,
   },
-  subtitle: {
-    color: "#475569",
-    marginTop: 3,
+  ticketMetaCard: {
+    minWidth: 150,
+    borderRadius: 14,
+    border: "1 solid #ead8bf",
+    backgroundColor: "#fff7ed",
+    padding: 12,
   },
   code: {
-    marginTop: 10,
-    fontSize: 12,
-    color: "#0f172a",
+    marginTop: 8,
+    fontSize: 14,
+    color: "#7c2d12",
     fontWeight: 700,
+  },
+  subCode: {
+    marginTop: 3,
+    fontSize: 10,
+    color: "#9a3412",
   },
   bodyRow: {
     flexDirection: "row",
     gap: 18,
-    alignItems: "center",
+    alignItems: "flex-start",
+    marginTop: 18,
   },
   qr: {
-    width: 120,
-    height: 120,
+    width: 108,
+    height: 108,
+    borderRadius: 10,
+    border: "1 solid #ead8bf",
   },
   meta: {
     flexDirection: "column",
-    gap: 5,
+    gap: 10,
     flexGrow: 1,
+  },
+  metaBlock: {
+    borderRadius: 12,
+    backgroundColor: "#f8fafc",
+    border: "1 solid #e2e8f0",
+    padding: 10,
   },
   label: {
     fontSize: 10,
-    color: "#64748b",
+    color: "#92400e",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
   },
   value: {
     fontSize: 12,
-    color: "#0f172a",
+    color: "#1f2937",
+    marginTop: 3,
+  },
+  divider: {
+    marginTop: 18,
+    borderTop: "1 solid #ead8bf",
+    paddingTop: 16,
+  },
+  barcodeLabel: {
+    fontSize: 10,
+    color: "#6b7280",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
   },
   barcode: {
-    marginTop: 14,
-    width: 280,
+    marginTop: 10,
+    width: 300,
     height: 56,
+    alignSelf: "center",
+  },
+  footerRow: {
+    marginTop: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  footerNote: {
+    maxWidth: 340,
+    fontSize: 10,
+    color: "#6b7280",
+    lineHeight: 1.4,
+  },
+  footerTemplate: {
+    fontSize: 10,
+    color: "#92400e",
+    fontWeight: 700,
   },
 });
 
@@ -90,28 +166,56 @@ function TicketDocument({ tickets }: { tickets: TicketPdfItem[] }) {
       {tickets.map((ticket) => (
         <Page key={ticket.ticketCode} size="A4" style={styles.page}>
           <View style={styles.card}>
-            <View style={styles.row}>
-              <View>
-                <Text style={styles.title}>{ticket.eventTitle}</Text>
-                <Text style={styles.subtitle}>{ticket.eventVenue}</Text>
-                <Text style={styles.subtitle}>{ticket.eventAddress}</Text>
+            <View style={styles.hero}>
+              <Text style={styles.heroLabel}>{PDF_TEMPLATE_NAME}</Text>
+              <Text style={styles.heroTitle}>{ticket.eventTitle}</Text>
+              <Text style={styles.heroSubTitle}>{ticket.eventVenue}</Text>
+              <Text style={styles.heroSubTitle}>{ticket.eventAddress}</Text>
+            </View>
+            <View style={styles.section}>
+              <View style={styles.row}>
+                <View style={styles.eventMeta}>
+                  <Text style={styles.label}>Admit One</Text>
+                  <Text style={styles.value}>{ticket.ticketType}</Text>
+                  <Text style={styles.subCode}>Present this PDF at the check-in desk.</Text>
+                </View>
+                <View style={styles.ticketMetaCard}>
+                  <Text style={styles.label}>Ticket Code</Text>
+                  <Text style={styles.code}>{ticket.ticketCode}</Text>
+                  <Text style={styles.subCode}>Keep this code for support or entry checks.</Text>
+                </View>
               </View>
-              <View>
-                <Text style={styles.label}>Ticket Type</Text>
-                <Text style={styles.value}>{ticket.ticketType}</Text>
-                <Text style={styles.code}>{ticket.ticketCode}</Text>
+
+              <View style={styles.bodyRow}>
+                <Image src={ticket.qrDataUrl} style={styles.qr} />
+                <View style={styles.meta}>
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.label}>Date & Time</Text>
+                    <Text style={styles.value}>{ticket.eventDate}</Text>
+                  </View>
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.label}>Buyer Email</Text>
+                    <Text style={styles.value}>{ticket.buyerEmail}</Text>
+                  </View>
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.label}>Venue</Text>
+                    <Text style={styles.value}>{ticket.eventVenue}</Text>
+                    <Text style={styles.value}>{ticket.eventAddress}</Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.divider}>
+                <Text style={styles.barcodeLabel}>Primary Barcode</Text>
+                <Image src={`data:image/png;base64,${ticket.barcodePng.toString("base64")}`} style={styles.barcode} />
+                <View style={styles.footerRow}>
+                  <Text style={styles.footerNote}>
+                    Scan either the QR code or barcode at the event entrance. This ticket is valid for one admission only.
+                  </Text>
+                  <Text style={styles.footerTemplate}>{PDF_TEMPLATE_NAME}</Text>
+                </View>
               </View>
             </View>
-            <View style={styles.bodyRow}>
-              <Image src={ticket.qrDataUrl} style={styles.qr} />
-              <View style={styles.meta}>
-                <Text style={styles.label}>Date</Text>
-                <Text style={styles.value}>{ticket.eventDate}</Text>
-                <Text style={styles.label}>Buyer</Text>
-                <Text style={styles.value}>{ticket.buyerEmail}</Text>
-              </View>
-            </View>
-            <Image src={`data:image/png;base64,${ticket.barcodePng.toString("base64")}`} style={styles.barcode} />
           </View>
         </Page>
       ))}

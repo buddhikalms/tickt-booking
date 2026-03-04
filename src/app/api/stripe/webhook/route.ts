@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null,
       );
       if (!result.duplicate && result.order) {
-        await sendTicketsForOrder(result.order.id);
+        await sendTicketsForOrder(result.order.id, { notifyAdmin: true });
       }
     } catch (error) {
       logger.error("Webhook processing failed", { error, eventId: event.id, sessionId: session.id });

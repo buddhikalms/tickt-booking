@@ -33,16 +33,16 @@ export default async function SuccessPage({
         <CardContent className="space-y-4 py-10 text-center">
           <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
           <h1 className="text-2xl font-semibold">Payment Successful</h1>
-          <p className="text-slate-600 dark:text-slate-300">
+          <p className="theme-muted-text">
             Your purchase has been confirmed. We are issuing your tickets and sending the PDF by email.
           </p>
           {syncResult ? (
-            <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
+            <p className="theme-panel theme-soft-text rounded-md border p-3 text-sm">
               {syncResult.message}
             </p>
           ) : null}
-          {sessionId ? <p className="text-xs text-slate-500">Checkout Session: {sessionId}</p> : null}
-          {orderId ? <p className="text-xs text-slate-500">Order: {orderId}</p> : null}
+          {sessionId ? <p className="theme-muted-text text-xs">Checkout Session: {sessionId}</p> : null}
+          {orderId ? <p className="theme-muted-text text-xs">Order: {orderId}</p> : null}
           <Button asChild>
             <Link href="/">Back to events</Link>
           </Button>

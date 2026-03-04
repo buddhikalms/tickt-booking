@@ -52,9 +52,9 @@ export default async function AdminDashboardPage() {
 
   return (
     <section className="space-y-6">
-      <div className="rounded-2xl border border-emerald-200/60 bg-gradient-to-r from-emerald-50 to-cyan-100 p-6 shadow-lg dark:border-emerald-900/30 dark:from-emerald-950/20 dark:to-cyan-950/20">
+      <div className="theme-banner rounded-2xl border p-6 shadow-lg">
         <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+        <p className="theme-muted-text mt-1 text-sm">
           Live business overview for bookings, sales, and check-in performance.
         </p>
       </div>
@@ -66,10 +66,10 @@ export default async function AdminDashboardPage() {
             <Card key={card.label} className="border-slate-200/80 shadow-sm dark:border-slate-800">
               <CardContent className="flex items-center justify-between pt-6">
                 <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{card.label}</p>
+                  <p className="theme-muted-text text-sm">{card.label}</p>
                   <p className="text-2xl font-semibold">{card.value}</p>
                 </div>
-                <Icon className="h-5 w-5 text-slate-500" />
+                <Icon className="theme-muted-text h-5 w-5" />
               </CardContent>
             </Card>
           );
@@ -81,7 +81,7 @@ export default async function AdminDashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle>Recent Orders</CardTitle>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Most recent transactions</p>
+              <p className="theme-muted-text text-sm">Most recent transactions</p>
             </div>
             <Button asChild variant="outline" size="sm">
               <Link href="/admin/orders">View all</Link>
@@ -114,16 +114,16 @@ export default async function AdminDashboardPage() {
         <Card className="border-slate-200/80 shadow-sm dark:border-slate-800">
           <CardHeader>
             <CardTitle>Performance (Last 30 days)</CardTitle>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Short-term momentum snapshot</p>
+            <p className="theme-muted-text text-sm">Short-term momentum snapshot</p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+            <div className="theme-panel rounded-xl border p-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-500 dark:text-slate-400">Paid Orders</p>
+                <p className="theme-muted-text text-sm">Paid Orders</p>
                 <TrendingUp className="h-4 w-4 text-emerald-500" />
               </div>
               <p className="mt-1 text-2xl font-semibold">{paidOrders30d._count._all}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="theme-muted-text text-xs">
                 Revenue: {formatCurrency(paidOrders30d._sum.totalCents ?? 0, DEFAULT_CURRENCY)}
               </p>
             </div>
@@ -131,10 +131,10 @@ export default async function AdminDashboardPage() {
             <div className="space-y-2">
               <p className="text-sm font-medium">Top Events by Tickets</p>
               {ticketByEvent.length === 0 ? (
-                <p className="text-sm text-slate-500 dark:text-slate-400">No ticket activity yet.</p>
+                <p className="theme-muted-text text-sm">No ticket activity yet.</p>
               ) : (
                 ticketByEvent.map((row) => (
-                  <div key={row.eventId} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 dark:border-slate-800">
+                  <div key={row.eventId} className="theme-panel flex items-center justify-between rounded-lg border px-3 py-2">
                     <p className="text-sm">{eventMap.get(row.eventId) ?? row.eventId}</p>
                     <Badge variant="secondary">{row._count._all} sold</Badge>
                   </div>

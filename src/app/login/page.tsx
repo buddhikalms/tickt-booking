@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   return (
     <section className="mx-auto max-w-md">
-      <Card className="border-amber-200/80 bg-amber-50/45 dark:border-amber-900/70 dark:bg-amber-950/20">
+      <Card className="theme-panel border">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <CardDescription>Access your temple booking dashboard.</CardDescription>
@@ -44,10 +44,10 @@ export default function LoginPage() {
           </Button>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-amber-200 dark:border-amber-900/70" />
+              <span className="w-full border-t border-[var(--border-soft)]" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-amber-50 px-2 text-amber-950/85 dark:bg-amber-950 dark:text-amber-50/85">or</span>
+              <span className="bg-[var(--surface-panel)] px-2 text-[var(--text-muted)]">or</span>
             </div>
           </div>
           <form
@@ -81,7 +81,7 @@ export default function LoginPage() {
               Sign In
             </Button>
           </form>
-          <p className="text-center text-sm text-amber-950/90 dark:text-amber-50/90">
+          <p className="theme-soft-text text-center text-sm">
             New here?{" "}
             <Link href={registerHref} className="font-medium underline decoration-amber-500/60 underline-offset-4">
               Create account

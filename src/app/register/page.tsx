@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
   return (
     <section className="mx-auto max-w-md">
-      <Card className="border-amber-200/80 bg-amber-50/45 dark:border-amber-900/70 dark:bg-amber-950/20">
+      <Card className="theme-panel border">
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
           <CardDescription>Join the temple community and book programs online.</CardDescription>
@@ -125,7 +125,7 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-amber-950/90 dark:text-amber-50/90">
+          <p className="theme-soft-text text-center text-sm">
             Already have an account?{" "}
             <Link href={loginHref} className="font-medium underline decoration-amber-500/60 underline-offset-4">
               Sign in

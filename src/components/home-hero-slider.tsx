@@ -32,8 +32,8 @@ export function HomeHeroSlider({ slides }: Props) {
 
   if (slides.length === 0) {
     return (
-      <div className="rounded-3xl border border-amber-200/80 bg-amber-50/70 p-6 shadow-lg dark:border-amber-900/70 dark:bg-amber-950/35">
-        <p className="text-sm text-amber-950/85 dark:text-amber-50/85">No featured temple events yet.</p>
+      <div className="theme-card rounded-3xl border p-6">
+        <p className="theme-muted-text text-sm">No featured temple events yet.</p>
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function HomeHeroSlider({ slides }: Props) {
   const active = slides[activeIndex];
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-amber-100/60 bg-amber-50/70 shadow-2xl backdrop-blur-sm dark:border-amber-900/70 dark:bg-amber-950/45">
+    <div className="theme-card relative overflow-hidden rounded-3xl border backdrop-blur-sm">
       <div className="relative h-[360px] md:h-[420px]">
         {slides.map((slide, index) => (
           <div
@@ -118,7 +118,7 @@ export function HomeHeroSlider({ slides }: Props) {
               type="button"
               onClick={() => setActiveIndex(index)}
               aria-label={`Go to slide ${index + 1}`}
-              className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-7 bg-amber-600 dark:bg-amber-400" : "w-2.5 bg-amber-200/80 dark:bg-amber-900/80"}`}
+              className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-7 bg-amber-600 dark:bg-amber-400" : "w-2.5 bg-[var(--border-strong)]"}`}
             />
           ))}
         </div>
