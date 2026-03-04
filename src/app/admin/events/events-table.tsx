@@ -12,10 +12,27 @@ type EventRow = {
   title: string;
   venue: string;
   startsAt: string;
+  coverImage: string | null;
   isPublished: boolean;
 };
 
 const columns: ColumnDef<EventRow>[] = [
+  {
+    accessorKey: "coverImage",
+    header: "Image",
+    cell: ({ row }) =>
+      row.original.coverImage ? (
+        <div
+          aria-label={`${row.original.title} cover`}
+          className="h-16 w-24 rounded-lg bg-cover bg-center"
+          style={{ backgroundImage: `url(${row.original.coverImage})` }}
+        />
+      ) : (
+        <div className="flex h-16 w-24 items-center justify-center rounded-lg border border-dashed border-slate-300 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+          No image
+        </div>
+      ),
+  },
   {
     accessorKey: "title",
     header: ({ column }) => (

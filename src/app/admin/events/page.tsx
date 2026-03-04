@@ -21,6 +21,7 @@ export default async function AdminEventsPage() {
           title: event.title,
           venue: event.venue,
           startsAt: format(event.startsAt, "PPP p"),
+          coverImage: event.coverImage,
           isPublished: event.isPublished,
         }))}
       />
