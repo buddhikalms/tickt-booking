@@ -3,7 +3,7 @@
 Production-ready event ticketing platform with:
 - Public event browsing and online checkout (Stripe or SumUp)
 - Idempotent webhook-based ticket issuance
-- QR + barcode ticket generation and PDF email delivery via Gmail SMTP
+- QR + barcode ticket generation and PDF email delivery via Resend
 - Admin panel for events, ticket types, orders, tickets, and check-in
 - Role-based auth (`ADMIN`, `STAFF`, `CUSTOMER`) with Auth.js (NextAuth)
 
@@ -12,7 +12,7 @@ Production-ready event ticketing platform with:
 - Prisma + MySQL
 - Auth.js / NextAuth credentials + role-based session
 - Stripe Checkout or SumUp Hosted Checkout + webhook
-- Gmail SMTP email
+- Resend email delivery
 - Tailwind CSS + reusable UI primitives
 - Zod + React Hook Form
 - TanStack Table
@@ -45,11 +45,7 @@ cp .env.example .env
   - `SUMUP_API_KEY`
   - `SUMUP_MERCHANT_CODE`
   - `SUMUP_WEBHOOK_SECRET` (optional but recommended)
-- `SMTP_HOST` (`smtp.gmail.com`)
-- `SMTP_PORT` (`465`)
-- `SMTP_SECURE` (`true`)
-- `SMTP_USER` (your Gmail address)
-- `SMTP_PASS` (Google App Password)
+- `RESEND_API_KEY`
 - `EMAIL_FROM`
 - `APP_URL`
 
@@ -102,12 +98,10 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 3. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`.
 4. Restart dev server after updating env.
 
-## Gmail SMTP Email Setup
-- Enable 2-Step Verification on your Gmail account.
-- Generate a Google App Password and set it as `SMTP_PASS`.
-- Set `SMTP_USER` to your Gmail address.
-- Use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`.
-- Keep `EMAIL_FROM` aligned with your Gmail address/domain policy.
+## Resend Email Setup
+- Create an API key in the Resend dashboard and set it as `RESEND_API_KEY`.
+- Verify the sending domain or sender identity you plan to use for `EMAIL_FROM`.
+- Keep `EMAIL_FROM` aligned with the verified sender in Resend.
 
 ## Auth / Admin
 - Login page: `/login`

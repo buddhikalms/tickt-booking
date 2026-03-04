@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import type { Ticket, TicketType, Event, Order } from "@prisma/client";
 import { getEnv } from "@/lib/env";
-import { getMailer } from "@/lib/mailer";
+import { getResend } from "@/lib/mailer";
 import { buildBarcodeBuffer, buildQrDataUrl } from "@/lib/ticket-artifacts";
 import { logger } from "@/lib/logger";
 import { renderTicketsPdf, type TicketPdfItem } from "@/lib/ticket-pdf";
@@ -11,9 +11,19 @@ type TicketWithDetails = Ticket & {
   event: Event;
 };
 
+function dataUrlToBuffer(dataUrl: string) {
+  const parts = dataUrl.split(",", 2);
+  if (parts.length !== 2) {
+    throw new Error("INVALID_DATA_URL");
+  }
+
+  return Buffer.from(parts[1], "base64");
+}
+
 export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[]) {
   if (tickets.length === 0) return;
 
+  const env = getEnv();
   const payload: TicketPdfItem[] = await Promise.all(
     tickets.map(async (ticket) => {
       const ticketIdentifier = `TID:${ticket.id}`;
@@ -33,10 +43,8 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
 
   const pdfBuffer = await renderTicketsPdf(payload);
   const firstEvent = tickets[0].event;
-  const firstTicketBarcode = payload[0]?.barcodePng
-    ? `data:image/png;base64,${payload[0].barcodePng.toString("base64")}`
-    : null;
-  const firstTicketQr = payload[0]?.qrDataUrl ?? null;
+  const firstTicketBarcodeCid = payload[0]?.barcodePng ? "primary-ticket-barcode" : null;
+  const firstTicketQrCid = payload[0]?.qrDataUrl ? "primary-ticket-qr" : null;
   const ticketRowsHtml = tickets
     .slice(0, 6)
     .map(
@@ -48,9 +56,36 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
       </tr>`,
     )
     .join("");
+  const attachments = [
+    {
+      filename: `tickets-${order.id}.pdf`,
+      content: pdfBuffer,
+      contentType: "application/pdf",
+    },
+    ...(payload[0]?.barcodePng
+      ? [
+          {
+            filename: `barcode-${order.id}.png`,
+            content: payload[0].barcodePng,
+            contentType: "image/png",
+            contentId: firstTicketBarcodeCid!,
+          },
+        ]
+      : []),
+    ...(payload[0]?.qrDataUrl
+      ? [
+          {
+            filename: `qr-${order.id}.png`,
+            content: dataUrlToBuffer(payload[0].qrDataUrl),
+            contentType: "image/png",
+            contentId: firstTicketQrCid!,
+          },
+        ]
+      : []),
+  ];
 
-  const info = await getMailer().sendMail({
-    from: getEnv().EMAIL_FROM,
+  const { data, error } = await getResend().emails.send({
+    from: env.EMAIL_FROM,
     to: order.email,
     subject: `Your tickets for ${firstEvent.title}`,
     html: `
@@ -112,19 +147,19 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
           <tr>
             <td style="padding:20px 24px 24px;">
               ${
-                firstTicketBarcode
+                firstTicketBarcodeCid
                   ? `<div style="margin-bottom:12px;padding:12px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;">
                       <p style="margin:0 0 8px;font-size:12px;color:#64748b;">Primary Ticket Barcode</p>
-                      <img src="${firstTicketBarcode}" alt="Ticket barcode" style="display:block;max-width:280px;height:auto;" />
+                      <img src="cid:${firstTicketBarcodeCid}" alt="Ticket barcode" style="display:block;max-width:280px;height:auto;" />
                       ${
-                        firstTicketQr
-                          ? `<img src="${firstTicketQr}" alt="Ticket QR" style="display:block;margin-top:10px;width:92px;height:92px;border:1px solid #e2e8f0;border-radius:8px;" />`
+                        firstTicketQrCid
+                          ? `<img src="cid:${firstTicketQrCid}" alt="Ticket QR" style="display:block;margin-top:10px;width:92px;height:92px;border:1px solid #e2e8f0;border-radius:8px;" />`
                           : ""
                       }
                     </div>`
                   : ""
               }
-              <a href="${getEnv().APP_URL}/dashboard" style="display:inline-block;background:#92400e;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Open My Dashboard</a>
+              <a href="${env.APP_URL}/dashboard" style="display:inline-block;background:#92400e;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:8px;font-size:14px;font-weight:600;">Open My Dashboard</a>
               <p style="margin:12px 0 0;font-size:12px;color:#64748b;">
                 Bring this ticket PDF to the event. QR/barcode is required for check-in.
               </p>
@@ -133,16 +168,14 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
         </table>
       </div>
     `,
-    attachments: [
-      {
-        filename: `tickets-${order.id}.pdf`,
-        content: pdfBuffer,
-      },
-    ],
+    attachments,
   });
 
-  if (info.rejected?.length) {
-    logger.error("Failed to send ticket email", { orderId: order.id, rejected: info.rejected });
+  if (error || !data?.id) {
+    logger.error("Failed to send ticket email", {
+      orderId: order.id,
+      error: error?.message ?? "Unknown Resend API error",
+    });
     throw new Error("EMAIL_SEND_FAILED");
   }
 
@@ -150,6 +183,6 @@ export async function sendTicketsEmail(order: Order, tickets: TicketWithDetails[
     orderId: order.id,
     email: order.email,
     ticketCount: tickets.length,
-    messageId: info.messageId,
+    messageId: data.id,
   });
 }

@@ -1,23 +1,14 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { getEnv } from "@/lib/env";
 
 const globalForMailer = globalThis as unknown as {
-  transporter?: nodemailer.Transporter;
+  resend?: Resend;
 };
 
-export function getMailer() {
-  if (!globalForMailer.transporter) {
-    const env = getEnv();
-    globalForMailer.transporter = nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: env.SMTP_PORT,
-      secure: env.SMTP_SECURE === "true",
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-      },
-    });
+export function getResend() {
+  if (!globalForMailer.resend) {
+    globalForMailer.resend = new Resend(getEnv().RESEND_API_KEY);
   }
 
-  return globalForMailer.transporter;
+  return globalForMailer.resend;
 }
