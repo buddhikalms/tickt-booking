@@ -199,6 +199,15 @@ export default async function RootLayout({
                     <span>Official Website</span>
                   </a>
                 </div>
+                <div className="theme-soft-text pt-2 text-sm">
+                  <p className="mb-2 text-xs">All tickets are non-refundable.</p>
+                  <Link
+                    href="/privacy-policy"
+                    className="underline-offset-4 transition-colors hover:text-amber-700 hover:underline dark:hover:text-amber-300"
+                  >
+                    Privacy Policy
+                  </Link>
+                </div>
               </div>
             </div>
           </footer>

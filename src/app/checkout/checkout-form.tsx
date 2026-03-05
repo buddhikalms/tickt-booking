@@ -173,6 +173,9 @@ export function CheckoutForm({
           <span>Total</span>
           <strong>{formatCurrency(totals.totalCents, ticketTypes[0]?.currency ?? DEFAULT_CURRENCY)}</strong>
         </div>
+        <p className="theme-muted-text mt-3 border-t border-[var(--border-soft)] pt-3 text-xs">
+          All ticket sales are final. Tickets are non-refundable.
+        </p>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
         {isPending ? "Redirecting..." : "Proceed to Checkout"}
